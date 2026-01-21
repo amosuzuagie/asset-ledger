@@ -1,6 +1,7 @@
 package com.company.assetmgmt.service.impl;
 
 import com.company.assetmgmt.dto.*;
+import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.model.Asset;
 import com.company.assetmgmt.model.AssetStatus;
 import com.company.assetmgmt.model.Branch;
@@ -9,7 +10,6 @@ import com.company.assetmgmt.repository.BranchRepository;
 import com.company.assetmgmt.service.AssetService;
 import com.company.assetmgmt.service.AuditService;
 import com.company.assetmgmt.specification.AssetSpecification;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +36,7 @@ public class AssetServiceImpl implements AssetService {
 
         if (request.getBranchId() != null) {
             branch = branchRepository.findById(request.getBranchId())
-                    .orElseThrow(() -> new EntityNotFoundException("Branch not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
         }
 
         Asset asset = Asset.builder()
@@ -92,7 +92,7 @@ public class AssetServiceImpl implements AssetService {
 
         Branch branch = branchRepository.findById(branchId)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Branch not found"));
+                        new ResourceNotFoundException("Branch not found"));
 
         asset.setBranch(branch);
         asset.setStatus(AssetStatus.ASSIGNED);
@@ -152,7 +152,7 @@ public class AssetServiceImpl implements AssetService {
 
     private Asset getAssetEntity(UUID assetId) {
         return assetRepository.findById(assetId)
-                .orElseThrow(() -> new EntityNotFoundException("Asset not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
     }
 
     private AssetResponse mapToResponse(Asset asset) {
