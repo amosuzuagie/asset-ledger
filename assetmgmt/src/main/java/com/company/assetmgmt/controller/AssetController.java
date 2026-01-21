@@ -2,10 +2,15 @@ package com.company.assetmgmt.controller;
 
 import com.company.assetmgmt.dto.AssetCreateRequest;
 import com.company.assetmgmt.dto.AssetResponse;
+import com.company.assetmgmt.dto.AssetSearchRequest;
 import com.company.assetmgmt.dto.AssetUpdateRequest;
 import com.company.assetmgmt.service.AssetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -70,5 +75,13 @@ public class AssetController {
     @GetMapping
     public ResponseEntity<List<AssetResponse>> getAllAssets() {
         return ResponseEntity.ok(assetService.getAllAssets());
+    }
+
+    @PostMapping("/search")
+    public Page<AssetResponse> searchAssets(
+            @RequestBody AssetSearchRequest filter,
+            @ParameterObject @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return assetService.searchAssets(filter, pageable);
     }
 }

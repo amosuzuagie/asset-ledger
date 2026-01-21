@@ -1,9 +1,6 @@
 package com.company.assetmgmt.service.impl;
 
-import com.company.assetmgmt.dto.AssetCreateRequest;
-import com.company.assetmgmt.dto.AssetResponse;
-import com.company.assetmgmt.dto.AssetUpdateRequest;
-import com.company.assetmgmt.dto.BranchSummary;
+import com.company.assetmgmt.dto.*;
 import com.company.assetmgmt.model.Asset;
 import com.company.assetmgmt.model.AssetStatus;
 import com.company.assetmgmt.model.Branch;
@@ -11,8 +8,11 @@ import com.company.assetmgmt.repository.AssetRepository;
 import com.company.assetmgmt.repository.BranchRepository;
 import com.company.assetmgmt.service.AssetService;
 import com.company.assetmgmt.service.AuditService;
+import com.company.assetmgmt.specification.AssetSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -137,6 +137,13 @@ public class AssetServiceImpl implements AssetService {
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AssetResponse> searchAssets(AssetSearchRequest filter, Pageable pageable) {
+        return assetRepository.findAll(AssetSpecification.build(filter), pageable)
+                .map(this::mapToResponse);
     }
 
     // =============================
