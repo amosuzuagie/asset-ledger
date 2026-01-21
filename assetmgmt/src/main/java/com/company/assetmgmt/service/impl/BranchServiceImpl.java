@@ -1,0 +1,65 @@
+package com.company.assetmgmt.service.impl;
+
+import com.company.assetmgmt.dto.BranchRequest;
+import com.company.assetmgmt.dto.BranchResponse;
+import com.company.assetmgmt.model.Branch;
+import com.company.assetmgmt.repository.BranchRepository;
+import com.company.assetmgmt.service.BranchService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class BranchServiceImpl implements BranchService {
+    private final BranchRepository branchRepository;
+
+    @Override
+    public BranchResponse create(BranchRequest request) {
+//        if (branchRepository.existsByCode(request.getCode())) {
+//            throw new IllegalArgumentException("Branch code already exists");
+//        }
+
+        Branch branch = Branch.builder()
+                .name(request.getName())
+//                .code(request.getCode())
+                .state(request.getState())
+                .location(request.getLocation())
+                .address(request.getAddress())
+                .build();
+        return null;
+    }
+
+    @Override
+    public BranchResponse update(UUID id, BranchRequest request) {
+        Branch branch = branchRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Branch not found"));
+
+        branch.setName(request.getName());
+        branch.setState(request.getState());
+        branch.setLocation(request.getLocation());
+        branch.setAddress(request.getAddress());
+
+        return mapToResponse(branchRepository.save(branch));
+    }
+
+    @Override
+    public List<BranchResponse> findAll() {
+        return branchRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private BranchResponse mapToResponse(Branch branch) {
+        return new BranchResponse(
+                branch.getId(),
+                branch.getName(),
+                branch.getState(),
+                branch.getLocation(),
+                branch.getAddress()
+        );
+    }
+}
