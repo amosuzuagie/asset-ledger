@@ -17,10 +17,11 @@ import java.util.UUID;
 
 /**
  * Base entity class providing common fields for all entities.
- * -
- * Includes a UUID primary key, audit fields (created/modified dates and users),
- * and standard equals/hashCode implementations. Enables automatic JPA auditing
- * via Spring Data JPA's `AuditingEntityListener`.
+ *
+ * Includes:
+ * - UUID primary key
+ * - Auditing fields (created/modified dates and users)
+ * - Soft delete support
  */
 
 @Getter
@@ -32,9 +33,17 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
+    /* =======================
+       PRIMARY KEY
+     ======================= */
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    /* =======================
+       AUDIT FIELDS
+     ======================= */
 
     @CreatedDate
     @Column(name = "created_date", updatable = false, nullable = false)
@@ -51,6 +60,34 @@ public abstract class BaseEntity {
     @LastModifiedBy
     @Column(name = "last_modified_by", insertable = false)
     private UUID lastModifiedBy;
+
+    /* =======================
+       SOFT DELETE FIELDS
+     ======================= */
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
+    /* =======================
+       SOFT DELETE METHODS
+     ======================= */
+
+    public void markDeleted() {
+        this.deleted = true;
+        this.deletedAt = Instant.now();
+    }
+
+    public void restore() {
+        this.deleted = false;
+        this.deletedAt = null;
+    }
+
+    /* =======================
+       EQUALITY
+     ======================= */
 
     @Override
     public boolean equals(Object o) {

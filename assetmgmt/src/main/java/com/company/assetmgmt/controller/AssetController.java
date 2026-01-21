@@ -84,4 +84,18 @@ public class AssetController {
     ) {
         return assetService.searchAssets(filter, pageable);
     }
+
+    @DeleteMapping("/{asset_id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteAsset(@PathVariable("asset_id") UUID assetId) {
+        assetService.deleteAsset(assetId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{asset_id}/restore")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> restoreAsset(@PathVariable("asset_id") UUID assetId) {
+        assetService.restoreAsset(assetId);
+        return ResponseEntity.ok().build();
+    }
 }

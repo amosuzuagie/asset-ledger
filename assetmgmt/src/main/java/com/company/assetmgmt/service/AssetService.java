@@ -24,4 +24,8 @@ public interface AssetService {
     List<AssetResponse> getAllAssets();
 
     Page<AssetResponse> searchAssets(AssetSearchRequest filter, Pageable pageable);
+
+    void deleteAsset(UUID assetId);
+
+    void restoreAsset(UUID assetId);
 }

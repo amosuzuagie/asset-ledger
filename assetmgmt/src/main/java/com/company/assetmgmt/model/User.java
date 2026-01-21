@@ -3,6 +3,7 @@ package com.company.assetmgmt.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
+@SQLRestriction("deleted = false")
 public class User extends BaseEntity{
     @Email
     @Column(nullable = false, unique = true)

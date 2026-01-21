@@ -1,6 +1,7 @@
 package com.company.assetmgmt.service.impl;
 
 import com.company.assetmgmt.dto.*;
+import com.company.assetmgmt.exception.BusinessRuleException;
 import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.model.Asset;
 import com.company.assetmgmt.model.AssetStatus;
@@ -144,6 +145,39 @@ public class AssetServiceImpl implements AssetService {
     public Page<AssetResponse> searchAssets(AssetSearchRequest filter, Pageable pageable) {
         return assetRepository.findAll(AssetSpecification.build(filter), pageable)
                 .map(this::mapToResponse);
+    }
+
+    @Override
+    public void deleteAsset(UUID assetId) {
+        Asset asset = assetRepository.findById(assetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+
+        if (asset.getStatus() == AssetStatus.ASSIGNED) {
+            throw new BusinessRuleException("Assigned asset must be unassigned before deletion");
+        }
+
+        asset.markDeleted();
+
+        auditService.log(
+                "DELETE_ASSET",
+                asset.getId(),
+                "Asset soft deleted"
+        );
+    }
+
+    @Override
+    public void restoreAsset(UUID assetId) {
+        Asset asset = assetRepository.findById(assetId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Asset not found"));
+
+        asset.restore();
+
+        auditService.log(
+                "RESTORE_ASSET",
+                asset.getId(),
+                "Asset restored"
+        );
     }
 
     // =============================
