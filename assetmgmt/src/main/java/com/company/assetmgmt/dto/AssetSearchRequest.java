@@ -5,14 +5,18 @@ import com.company.assetmgmt.model.AssetStatus;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 public class AssetSearchRequest {
-    private String serialNumber;
-    private String tagId;
+    private String assetCode;
+    private String description;
+
     private AssetClass assetClass;
+    private UUID categoryId;
+    private UUID branchId;
+
     private AssetStatus status;
-    private Long branchId;
     private String subsidiary;
 
     private LocalDate acquiredFrom;

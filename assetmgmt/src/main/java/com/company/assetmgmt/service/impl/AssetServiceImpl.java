@@ -3,17 +3,19 @@ package com.company.assetmgmt.service.impl;
 import com.company.assetmgmt.dto.*;
 import com.company.assetmgmt.exception.BusinessRuleException;
 import com.company.assetmgmt.exception.ResourceNotFoundException;
-import com.company.assetmgmt.model.Asset;
-import com.company.assetmgmt.model.AssetStatus;
-import com.company.assetmgmt.model.Branch;
+import com.company.assetmgmt.mapper.AssetMapper;
+import com.company.assetmgmt.model.*;
+import com.company.assetmgmt.repository.AssetCategoryRepository;
 import com.company.assetmgmt.repository.AssetRepository;
 import com.company.assetmgmt.repository.BranchRepository;
+import com.company.assetmgmt.security.SecurityUtil;
 import com.company.assetmgmt.service.AssetService;
 import com.company.assetmgmt.service.AuditService;
 import com.company.assetmgmt.specification.AssetSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,57 +32,58 @@ public class AssetServiceImpl implements AssetService {
     private final AuditService auditService;
     private final AssetRepository assetRepository;
     private final BranchRepository branchRepository;
+    private final AssetCategoryRepository categoryRepository;
+
 
     @Override
-    public AssetResponse createAsset(AssetCreateRequest request) {
-        Branch branch = null;
+    public AssetResponse createAsset(AssetCreateRequest request, UUID categoryId) {
 
-        if (request.getBranchId() != null) {
-            branch = branchRepository.findById(request.getBranchId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
+        // Asset code must be unique
+        if (assetRepository.existsByAssetCode(request.getAssetCode())) {
+            throw new IllegalStateException("Asset code already exists");
         }
 
-        Asset asset = Asset.builder()
-                .description(request.getDescription())
-                .assetClass(request.getAssetClass())
-                .serialNumber(request.getSerialNumber())
-                .tagId(request.getTagId())
-                .acquisitionDate(request.getAcquisitionDate())
-                .amount(request.getAmount())
-                .remark(request.getRemark())
-                .subsidiary(request.getSubsidiary())
-                .status(branch == null ? AssetStatus.IN_STORE : AssetStatus.ASSIGNED)
-                .branch(branch)
-                .build();
+        AssetCategory category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asset category not found"));
 
-        Asset savedAsset = assetRepository.save(asset);
+        AssetClass lockedClass = category.getAssetClass();
 
-        auditService.log(
-                "CREATE_ASSET",
-                savedAsset.getId(),
-                "Asset created"
+        Asset asset = AssetMapper.toEntity(request);
+        asset.setAssetClass(lockedClass);
+        asset.setCategory(category);
+
+        asset.setStatus(
+                asset.getBranch() == null ? AssetStatus.IN_STORE : AssetStatus.ASSIGNED
         );
 
-        return mapToResponse(savedAsset);
+        assetRepository.save(asset);
+
+        return AssetMapper.toResponse(asset);
     }
 
     @Override
-    public AssetResponse updateAsset(UUID assetId, AssetUpdateRequest request) {
-        Asset asset = getAssetEntity(assetId);
+    public AssetResponse updateAsset(UUID assetId, AssetUpdateRequest request, UUID categoryId) {
+        if (!SecurityUtil.hasRole("ADMIN") || !SecurityUtil.hasRole("FINANCE")) {
+            throw new SecurityException("You are not allowed to update assets");
+        }
 
-        asset.setDescription(request.getDescription());
-        asset.setAssetClass(request.getAssetClass());
-        asset.setAmount(request.getAmount());
-        asset.setRemark(request.getRemark());
-        asset.setSubsidiary(request.getSubsidiary());
+        Asset existing = assetRepository.findById(assetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
 
-        auditService.log(
-                "UPDATE_ASSET",
-                asset.getId(),
-                "Asset details updated"
-        );
+        //Prevent asset class changes
+        AssetClass existingClass = existing.getAssetClass();
 
-        return mapToResponse(asset);
+        if (categoryId != null) {
+            AssetCategory category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Asset category not found"));
+
+            if (!category.getAssetClass().equals(existingClass)) {
+                throw new IllegalStateException("Category does not belong to asset class: " + existingClass);
+            }
+            existing.setCategory(category);
+        }
+
+        return AssetMapper.toAllowedUpdate(existing, request);
     }
 
     @Override
@@ -104,7 +107,7 @@ public class AssetServiceImpl implements AssetService {
                 "Assigned to branch ID: " + branchId
         );
 
-        return mapToResponse(asset);
+        return AssetMapper.toResponse(asset);
     }
 
     @Override
@@ -112,7 +115,7 @@ public class AssetServiceImpl implements AssetService {
         Asset asset = getAssetEntity(assetId);
 
         asset.setStatus(AssetStatus.DISPOSED);
-        asset.setDisposalDate(LocalDate.now());
+        asset.setDateOfDisposal(LocalDate.now());
         asset.setRemark(remark);
         asset.setBranch(null);
 
@@ -122,13 +125,13 @@ public class AssetServiceImpl implements AssetService {
                 "Disposed: " + remark
         );
 
-        return mapToResponse(asset);
+        return AssetMapper.toResponse(asset);
     }
 
     @Override
     @Transactional(readOnly = true)
     public AssetResponse getAssetById(UUID assetId) {
-        return mapToResponse(getAssetEntity(assetId));
+        return  AssetMapper.toResponse(getAssetEntity(assetId));
     }
 
     @Override
@@ -136,15 +139,25 @@ public class AssetServiceImpl implements AssetService {
     public List<AssetResponse> getAllAssets() {
         return assetRepository.findAll()
                 .stream()
-                .map(this::mapToResponse)
+                .map(AssetMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<AssetResponse> searchAssets(AssetSearchRequest filter, Pageable pageable) {
-        return assetRepository.findAll(AssetSpecification.build(filter), pageable)
-                .map(this::mapToResponse);
+        Specification<Asset> spec = Specification.where(
+                AssetSpecification.hasAssetCodeLike(filter.getAssetCode())
+                ).and(AssetSpecification.hasDescriptionLike(filter.getDescription()))
+                .and(AssetSpecification.hasAssetClass(filter.getAssetClass()))
+                .and(AssetSpecification.hasCategory(filter.getCategoryId()))
+                .and(AssetSpecification.hasBranch(filter.getBranchId()))
+                .and(AssetSpecification.hasStatus(filter.getStatus()))
+                .and(AssetSpecification.hasSubsidiary(filter.getSubsidiary()))
+                .and(AssetSpecification.acquireBetween(filter.getAcquiredFrom(), filter.getAcquiredTo()));
+
+        return assetRepository.findAll(spec, pageable)
+                .map(AssetMapper::toResponse);
     }
 
     @Override
@@ -187,35 +200,5 @@ public class AssetServiceImpl implements AssetService {
     private Asset getAssetEntity(UUID assetId) {
         return assetRepository.findById(assetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
-    }
-
-    private AssetResponse mapToResponse(Asset asset) {
-        BranchSummary branchSummary = null;
-
-        if (asset.getBranch() != null) {
-            Branch b = asset.getBranch();
-            branchSummary = new BranchSummary(
-                    b.getId(),
-                    b.getName(),
-                    b.getState(),
-                    b.getLocation()
-            );
-        }
-
-        return new AssetResponse(
-                asset.getId(),
-                asset.getDescription(),
-                asset.getAssetClass(),
-                asset.getSerialNumber(),
-                asset.getTagId(),
-                asset.getStatus(),
-                asset.getAcquisitionDate(),
-                asset.getAmount(),
-                asset.getRemark(),
-                asset.getDisposalDate(),
-                asset.getDisposalCost(),
-                asset.getSubsidiary(),
-                branchSummary
-        );
     }
 }

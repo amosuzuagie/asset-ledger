@@ -25,22 +25,23 @@ import java.util.UUID;
 public class AssetController {
     private final AssetService assetService;
 
-    @PostMapping
+    @PostMapping("/{category_id}")
     public ResponseEntity<AssetResponse> createAsset(
-            @Valid @RequestBody AssetCreateRequest request
+            @Valid @RequestBody AssetCreateRequest request, @PathVariable("categoryId") UUID categoryId
     ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(assetService.createAsset(request));
+                .body(assetService.createAsset(request, categoryId));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{asset_id}/category/{category_id}")
     @PreAuthorize("hasAnyRole('ADMIN','FINANCE')")
     public ResponseEntity<AssetResponse> updateAsset(
-            @PathVariable UUID id,
+            @PathVariable("asset_id") UUID assetId,
+            @PathVariable("category_id") UUID categoryId,
             @Valid @RequestBody AssetUpdateRequest request
     ) {
-        return ResponseEntity.ok(assetService.updateAsset(id, request));
+        return ResponseEntity.ok(assetService.updateAsset(assetId, request, categoryId));
     }
 
     @PutMapping("/{asset_id}/assign/{branch_id}")

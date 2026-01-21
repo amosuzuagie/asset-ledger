@@ -1,6 +1,5 @@
 package com.company.assetmgmt.dto;
 
-import com.company.assetmgmt.model.AssetClass;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -12,32 +11,23 @@ import java.util.UUID;
 @Data
 public class AssetCreateRequest {
     @NotBlank
+    private String assetCode;
+
+    @NotBlank
     private String description;
 
     @NotNull
-    private AssetClass assetClass;
+    private UUID categoryId;
 
-    @NotBlank
     private String serialNumber;
 
-    @NotBlank
-    private String tagId;
+    private LocalDate dateOfAcquisition;
 
-    @NotNull
-    private LocalDate acquisitionDate;
-
-    @NotNull
     private BigDecimal amount;
+
+    private String subsidiary;
 
     private String remark;
 
-    @NotBlank
-    private String subsidiary;
-
-    /**
-     * Optional:
-     * Asset may be created in store
-     */
     private UUID branchId;
-
 }

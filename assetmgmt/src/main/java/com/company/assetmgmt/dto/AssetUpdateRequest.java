@@ -1,25 +1,24 @@
 package com.company.assetmgmt.dto;
 
-import com.company.assetmgmt.model.AssetClass;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 public class AssetUpdateRequest {
-    @NotBlank
     private String description;
 
-    @NotNull
-    private AssetClass assetClass;
+    private String serialNumber;
 
-    @NotNull
+    private LocalDate dateOfAcquisition;
+
     private BigDecimal amount;
+
+    private String subsidiary;
 
     private String remark;
 
-    @NotBlank
-    private String subsidiary;
+    private UUID categoryId;
 }

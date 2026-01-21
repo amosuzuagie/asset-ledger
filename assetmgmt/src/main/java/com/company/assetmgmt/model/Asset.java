@@ -26,63 +26,86 @@ import java.time.LocalDate;
         }
 )
 public class Asset extends BaseEntity {
-    // =========================
-    // Identification
-    // =========================
+    /* =======================
+       BUSINESS IDENTIFICATION
+     ======================= */
+
+    @Column(name = "asset_code", nullable = false, unique = true, length = 100)
+    private String assetCode;
 
     @Column(name = "description", nullable = false)
     private String description;
 
+    /* =======================
+       CLASSIFICATION
+     ======================= */
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "asset_class", nullable = false)
+    @Column(name = "asset_class", nullable = false, length = 20)
     private AssetClass assetClass;
 
-    @Column(name = "serial_number", nullable = false, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private AssetCategory category;
+
+    /* =======================
+       IDENTIFICATION DETAILS
+     ======================= */
+
+    @Column(name = "serial_number", unique = true)
     private String serialNumber;
 
-    @Column(name = "tag_id", nullable = false, unique = true)
-    private String tagId;
+    /* =======================
+       FINANCIALS
+     ======================= */
 
-    // =========================
-    // Lifecycle
-    // =========================
+    @Column(name = "date_of_acquisition")
+    private LocalDate dateOfAcquisition;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AssetStatus status;
-
-    // =========================
-    // Financials
-    // =========================
-
-    @Column(name = "date_of_acquisition", nullable = false)
-    private LocalDate acquisitionDate;
-
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Column(name = "amount", precision = 15, scale = 2)
     private BigDecimal amount;
 
-    @Column
-    private String remark;
-
-    @Column(name = "date_of_disposal")
-    private LocalDate disposalDate;
-
-    @Column(name = "cost_of_disposal", precision = 15, scale = 2)
-    private BigDecimal disposalCost;
-
-    @Column(nullable = false)
+    @Column(name = "subsidiary", length = 50)
     private String subsidiary;
 
-    // =========================
-    // Relationships
-    // =========================
+    /* =======================
+       LOCATION
+     ======================= */
 
-    /**
-     * Nullable:
-     * - Asset may be in store
-     * - Asset may be assigned later
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id")
-    private Branch branch;
+    private Branch branch; // nullable = in store
+
+    /* =======================
+       LIFECYCLE
+     ======================= */
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private AssetStatus status;
+
+    @Column(name = "date_of_disposal")
+    private LocalDate dateOfDisposal;
+
+    @Column(name = "cost_of_disposal", precision = 15, scale = 2)
+    private BigDecimal costOfDisposal;
+
+    /* =======================
+       REMARKS
+     ======================= */
+
+    @Column(name = "remark", length = 500)
+    private String remark;
+
+    /* =======================
+       HELPERS
+     ======================= */
+
+    public boolean isInStore() {
+        return branch == null && status == AssetStatus.IN_STORE;
+    }
+
+    public boolean isDisposed() {
+        return status == AssetStatus.DISPOSED;
+    }
 }

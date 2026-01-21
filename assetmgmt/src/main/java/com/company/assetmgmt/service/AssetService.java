@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AssetService {
-    AssetResponse createAsset(AssetCreateRequest request);
+    AssetResponse createAsset(AssetCreateRequest request, UUID categoryId);
 
-    AssetResponse updateAsset(UUID assetId, AssetUpdateRequest request);
+    AssetResponse updateAsset(UUID assetId, AssetUpdateRequest request, UUID categoryId);
 
     AssetResponse assignAssetToBranch(UUID assetId, UUID branchId);
 
