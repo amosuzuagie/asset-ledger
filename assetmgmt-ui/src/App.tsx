@@ -1,13 +1,13 @@
 import './App.css'
+import { useAuth } from './app/authContext'
 
 function App() {
+  const { user } = useAuth();
 
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-    </>
+    <div className="p-6">
+        <pre>{JSON.stringify(user, null, 2)}</pre>
+    </div>
   )
 }
 
