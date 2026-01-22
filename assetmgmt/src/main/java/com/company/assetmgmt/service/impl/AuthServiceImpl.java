@@ -2,7 +2,7 @@ package com.company.assetmgmt.service.impl;
 
 import com.company.assetmgmt.config.JwtUtil;
 import com.company.assetmgmt.dto.*;
-import com.company.assetmgmt.model.Role;
+import com.company.assetmgmt.model.enums.Role;
 import com.company.assetmgmt.model.User;
 import com.company.assetmgmt.repository.UserRepository;
 import com.company.assetmgmt.security.CustomUserDetails;
@@ -40,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
                 userDetails.getUser().getEmail(),
                 userDetails.getUser().getFirstName(),
                 userDetails.getUser().getLastName(),
-                userDetails.getUser().getRole().name()
+                userDetails.getUser().getRoles().name()
         ));
     }
 
@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .role(request.getRole() != null ? request.getRole() : Role.EMPLOYEE) // default role
+                .roles(request.getRole() != null ? request.getRole() : Role.MANAGERS) // default role
                 .enabled(true)
                 .build();
 
@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
         return new RegisterResponse(
                 savedUser.getId(),
                 savedUser.getEmail(),
-                savedUser.getRole().name()
+                savedUser.getRoles().name()
         );
     }
 }

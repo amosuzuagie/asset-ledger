@@ -1,5 +1,6 @@
 package com.company.assetmgmt.model;
 
+import com.company.assetmgmt.model.enums.AssetClass;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

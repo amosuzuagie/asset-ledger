@@ -1,11 +1,14 @@
 package com.company.assetmgmt.specification;
 
 import com.company.assetmgmt.model.*;
+import com.company.assetmgmt.model.enums.AssetClass;
+import com.company.assetmgmt.model.enums.AssetStatus;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 public final class AssetSpecification {
@@ -66,6 +69,13 @@ public final class AssetSpecification {
                 return cb.greaterThanOrEqualTo(root.get("dateOfAcquisition"), from);
             }
             return cb.lessThanOrEqualTo(root.get("dateOfAcquisition"), to);
+        };
+    }
+
+    public static Specification<Asset> branchIn(Set<UUID> branchIds) {
+        return (root, query, cb) -> {
+            if (branchIds == null || branchIds.isEmpty()) return null;
+            return root.get("branch").get("id").in(branchIds);
         };
     }
 }

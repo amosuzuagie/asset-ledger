@@ -1,7 +1,7 @@
 package com.company.assetmgmt.dto;
 
-import com.company.assetmgmt.model.AssetClass;
-import com.company.assetmgmt.model.AssetStatus;
+import com.company.assetmgmt.model.enums.AssetClass;
+import com.company.assetmgmt.model.enums.AssetStatus;
 import lombok.Data;
 
 import java.time.LocalDate;

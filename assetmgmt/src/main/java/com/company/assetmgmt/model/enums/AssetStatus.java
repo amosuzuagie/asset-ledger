@@ -1,4 +1,4 @@
-package com.company.assetmgmt.model;
+package com.company.assetmgmt.model.enums;
 
 public enum AssetStatus {
     IN_STORE,

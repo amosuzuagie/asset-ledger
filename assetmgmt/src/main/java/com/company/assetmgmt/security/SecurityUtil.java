@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public final class SecurityUtil {
     private SecurityUtil () {}
@@ -21,6 +22,11 @@ public final class SecurityUtil {
     public static String getCurrentUsername() {
         Authentication auth = getAuthentication();
         return auth != null ? auth.getName() : "SYSTEM";
+    }
+
+    public static UUID getCurrentUserId() {
+        Authentication auth = getAuthentication();
+        return auth != null ? (UUID) auth.getPrincipal() : null;
     }
 
     private static Authentication getAuthentication() {

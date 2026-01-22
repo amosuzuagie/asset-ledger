@@ -1,5 +1,7 @@
 package com.company.assetmgmt.model;
 
+import com.company.assetmgmt.model.enums.AssetClass;
+import com.company.assetmgmt.model.enums.AssetStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -84,11 +86,16 @@ public class Asset extends BaseEntity {
     @Column(name = "status", nullable = false, length = 20)
     private AssetStatus status;
 
+    private boolean disposed = false;
+
     @Column(name = "date_of_disposal")
     private LocalDate dateOfDisposal;
 
     @Column(name = "cost_of_disposal", precision = 15, scale = 2)
     private BigDecimal costOfDisposal;
+
+    @Column(name = "disposal_remark", length = 255)
+    private String disposalRemark;
 
     /* =======================
        REMARKS

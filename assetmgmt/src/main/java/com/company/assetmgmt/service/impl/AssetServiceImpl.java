@@ -5,7 +5,10 @@ import com.company.assetmgmt.exception.BusinessRuleException;
 import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.mapper.AssetMapper;
 import com.company.assetmgmt.model.*;
+import com.company.assetmgmt.model.enums.AssetClass;
+import com.company.assetmgmt.model.enums.AssetStatus;
 import com.company.assetmgmt.repository.AssetCategoryRepository;
+import com.company.assetmgmt.repository.AssetMovementRepository;
 import com.company.assetmgmt.repository.AssetRepository;
 import com.company.assetmgmt.repository.BranchRepository;
 import com.company.assetmgmt.security.SecurityUtil;
@@ -19,6 +22,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +36,9 @@ public class AssetServiceImpl implements AssetService {
     private final AuditService auditService;
     private final AssetRepository assetRepository;
     private final BranchRepository branchRepository;
+    private final BranchScopeServiceImpl branchScopeService;
     private final AssetCategoryRepository categoryRepository;
+    private final AssetMovementRepository movementRepository;
 
 
     @Override
@@ -69,6 +75,10 @@ public class AssetServiceImpl implements AssetService {
 
         Asset existing = assetRepository.findById(assetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+
+        if (existing.isDisposed()) {
+            throw new IllegalStateException("Disposed asset cannot be modified");
+        }
 
         //Prevent asset class changes
         AssetClass existingClass = existing.getAssetClass();
@@ -111,24 +121,6 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public AssetResponse disposeAsset(UUID assetId, String remark) {
-        Asset asset = getAssetEntity(assetId);
-
-        asset.setStatus(AssetStatus.DISPOSED);
-        asset.setDateOfDisposal(LocalDate.now());
-        asset.setRemark(remark);
-        asset.setBranch(null);
-
-        auditService.log(
-                "DISPOSE_ASSET",
-                asset.getId(),
-                "Disposed: " + remark
-        );
-
-        return AssetMapper.toResponse(asset);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public AssetResponse getAssetById(UUID assetId) {
         return  AssetMapper.toResponse(getAssetEntity(assetId));
@@ -155,6 +147,12 @@ public class AssetServiceImpl implements AssetService {
                 .and(AssetSpecification.hasStatus(filter.getStatus()))
                 .and(AssetSpecification.hasSubsidiary(filter.getSubsidiary()))
                 .and(AssetSpecification.acquireBetween(filter.getAcquiredFrom(), filter.getAcquiredTo()));
+
+        if (!branchScopeService.isGlobalScope()) {
+            spec = spec.and(
+                    AssetSpecification.branchIn(branchScopeService.getAccessibleBranchIds())
+            );
+        }
 
         return assetRepository.findAll(spec, pageable)
                 .map(AssetMapper::toResponse);
@@ -191,6 +189,49 @@ public class AssetServiceImpl implements AssetService {
                 asset.getId(),
                 "Asset restored"
         );
+    }
+
+    @Override
+    public AssetDisposalResponse disposeAsset(AssetDisposalRequest request) {
+        Asset asset = assetRepository.findById(request.getAssetId())
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+
+        if (asset.isDisposed()) {
+            throw new IllegalStateException("Asset already disposed");
+        }
+
+        // Record final movement
+        AssetMovementHistory history = AssetMovementHistory.builder()
+                .asset(asset)
+                .fromBranch(asset.getBranch())
+                .toBranch(null)
+                .reason("ASSET DISPOSAL")
+                .movementDate(Instant.now())
+                .build();
+
+        movementRepository.save(history);
+
+        asset.setBranch(null);
+        asset.setDisposed(true);
+        asset.setDateOfDisposal(LocalDate.now());
+        asset.setDisposalRemark(request.getRemark());
+        asset.setCostOfDisposal(request.getCostOfDisposal());
+
+        assetRepository.save(asset);
+
+        AssetDisposalResponse response = new AssetDisposalResponse();
+        response.setAssetId(asset.getId());
+        response.setRemark(asset.getDisposalRemark());
+        response.setCostOfDisposal(asset.getCostOfDisposal());
+        response.setDateOfDisposal(asset.getDateOfDisposal());
+
+        auditService.log(
+                "DISPOSE_ASSET",
+                asset.getId(),
+                "Disposed: " + request.getRemark()
+        );
+
+        return response;
     }
 
     // =============================

@@ -1,4 +1,4 @@
-package com.company.assetmgmt.model;
+package com.company.assetmgmt.model.enums;
 
 public enum AssetClass {
     FF,        // Furniture & Fittings

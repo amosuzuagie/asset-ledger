@@ -1,7 +1,7 @@
 package com.company.assetmgmt.repository;
 
 import com.company.assetmgmt.model.Asset;
-import com.company.assetmgmt.model.AssetStatus;
+import com.company.assetmgmt.model.enums.AssetStatus;
 import com.company.assetmgmt.repository.projection.CountByKeyProjection;
 import com.company.assetmgmt.repository.projection.SumByKeyProjection;
 import jakarta.validation.constraints.NotBlank;

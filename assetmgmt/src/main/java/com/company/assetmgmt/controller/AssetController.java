@@ -1,9 +1,7 @@
 package com.company.assetmgmt.controller;
 
-import com.company.assetmgmt.dto.AssetCreateRequest;
-import com.company.assetmgmt.dto.AssetResponse;
-import com.company.assetmgmt.dto.AssetSearchRequest;
-import com.company.assetmgmt.dto.AssetUpdateRequest;
+import com.company.assetmgmt.dto.*;
+import com.company.assetmgmt.service.AssetMovementService;
 import com.company.assetmgmt.service.AssetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +22,7 @@ import java.util.UUID;
 @RequestMapping("/api/assets")
 public class AssetController {
     private final AssetService assetService;
+    private final AssetMovementService assetMovementService;
 
     @PostMapping("/{category_id}")
     public ResponseEntity<AssetResponse> createAsset(
@@ -57,12 +56,9 @@ public class AssetController {
 
     @PutMapping("/{asset_id}/dispose")
     @PreAuthorize("hasAnyRole('ADMIN','FINANCE')")
-    public ResponseEntity<AssetResponse> disposeAsset(
-            @PathVariable("asset_id") UUID assetId,
-            @RequestParam String remark
-    ) {
+    public ResponseEntity<AssetDisposalResponse> disposeAsset(@RequestBody @Valid AssetDisposalRequest request) {
         return ResponseEntity.ok(
-                assetService.disposeAsset(assetId, remark)
+                assetService.disposeAsset(request)
         );
     }
 
@@ -98,5 +94,17 @@ public class AssetController {
     public ResponseEntity<Void> restoreAsset(@PathVariable("asset_id") UUID assetId) {
         assetService.restoreAsset(assetId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/move")
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCE','MANAGERS')")
+    public ResponseEntity<Void> moveAsset(@Valid @RequestBody AssetMovementRequest request) {
+        assetMovementService.moveAsset(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{asset_id}/movements")
+    public ResponseEntity<List<AssetMovementResponse>> getAssetMovementHistory(@PathVariable("asset_id") UUID assetId) {
+        return ResponseEntity.ok(assetMovementService.getAssetMovementHistory(assetId));
     }
 }

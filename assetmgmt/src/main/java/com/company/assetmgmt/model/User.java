@@ -1,12 +1,10 @@
 package com.company.assetmgmt.model;
 
+import com.company.assetmgmt.model.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -32,7 +30,7 @@ public class User extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role roles;
 
     private boolean enabled = true;
 }
