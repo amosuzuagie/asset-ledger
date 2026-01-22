@@ -13,11 +13,11 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @OpenAPIDefinition(
         info = @Info(
                 contact = @Contact(
-                        name = "Spring Property Management System",
-                        email = "contact@pms.com",
-                        url = "https://pms.com"
+                        name = "Winners Golden Group Asset Ledger",
+                        email = "contact@wgg.com",
+                        url = "https://wgg.com"
                 ),
-                description = "Open API documentation for Spring Property Management System",
+                description = "Open API documentation for automated asset ledger",
                 title = "OpenAPI Specification",
                 version = "1.0",
                 license = @License(
