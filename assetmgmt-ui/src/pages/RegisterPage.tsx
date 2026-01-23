@@ -9,7 +9,8 @@ const schema = z.object({
     email: z.string().email(),
     password: z.string().min(8),
     firstName: z.string().min(1),
-    lastName: z.string().min(1)
+    lastName: z.string().min(1),
+    role: z.enum(['ADMIN', 'AUDIT', 'FINANCE', 'MANAGERS', 'DIRECTORS'])
 });
 
 type RegisterForm = z.infer<typeof schema>;
@@ -38,6 +39,19 @@ export default function RegisterPage () {
                 <input {...form.register('lastName')} placeholder="Last name" className="input mt-2" />
                 <input {...form.register('email')} placeholder="Email" className="input mt-2" />
                 <input {...form.register('password')} type="password" placeholder="Password" className="input mt-2" />
+
+                <select
+                    {...form.register('role')}
+                    className="input mt-2"
+                    defaultValue=""
+                >
+                    <option value="" disabled>Select role</option>
+                    <option value='ADMIN'>ADMIN</option>
+                    <option value='AUDIT'>AUDIT</option>
+                    <option value='FINANCE'>FINANCE</option>
+                    <option value='MANAGERS'>MANAGERS</option>
+                    <option value='DIRECTORS'>DIRECTORS</option>
+                </select>
 
                 <button className="btn-primary w-full mt-4">Register</button>
 
