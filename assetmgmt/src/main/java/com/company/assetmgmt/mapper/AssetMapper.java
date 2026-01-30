@@ -29,9 +29,15 @@ public class AssetMapper {
         response.setCategoryName(
                 asset.getCategory() != null ? asset.getCategory().getName() : null
         );
+        response.setCategoryId(
+                asset.getCategory() != null ? asset.getCategory().getId() : null
+        );
         response.setStatus(asset.getStatus());
         response.setBranchName(
                 asset.getBranch() != null ? asset.getBranch().getName() : null
+        );
+        response.setBranchId(
+                asset.getBranch() != null ? asset.getBranch().getId() : null
         );
         response.setAmount(asset.getAmount());
         response.setDateOfAcquisition(asset.getDateOfAcquisition());

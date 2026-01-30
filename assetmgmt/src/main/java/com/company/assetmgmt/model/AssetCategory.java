@@ -24,4 +24,7 @@ public class AssetCategory extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(name = "asset_class", nullable = false)
     private AssetClass assetClass;
+
+    @Column(length = 500)
+    private String description;
 }

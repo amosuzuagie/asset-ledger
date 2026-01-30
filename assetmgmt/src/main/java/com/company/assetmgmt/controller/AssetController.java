@@ -26,7 +26,7 @@ public class AssetController {
 
     @PostMapping("/{category_id}")
     public ResponseEntity<AssetResponse> createAsset(
-            @Valid @RequestBody AssetCreateRequest request, @PathVariable("categoryId") UUID categoryId
+            @Valid @RequestBody AssetCreateRequest request, @PathVariable("category_id") UUID categoryId
     ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)

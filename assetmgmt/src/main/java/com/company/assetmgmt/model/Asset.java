@@ -22,10 +22,7 @@ import java.time.LocalDate;
 @SQLRestriction("deleted = false")
 @Table(
         name = "assets",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "serial_number"),
-                @UniqueConstraint(columnNames = "tag_id")
-        }
+        uniqueConstraints = {@UniqueConstraint(columnNames = "serial_number")}
 )
 public class Asset extends BaseEntity {
     /* =======================

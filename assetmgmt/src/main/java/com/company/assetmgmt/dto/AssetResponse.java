@@ -19,9 +19,13 @@ public class AssetResponse {
     private String description;
 
     private AssetClass assetClass;
+
+    private UUID categoryId;
     private String categoryName;
 
     private AssetStatus status;
+
+    private UUID branchId;
     private String branchName;
 
     private BigDecimal amount;
