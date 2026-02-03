@@ -10,6 +10,12 @@ import { AssetListPage } from "../features/assets/pages/AssetListPage";
 import { CreateAssetPage } from "../features/assets/pages/CreateAssetPage";
 import { EditAssetPage } from "../features/assets/pages/EditAssetPage";
 import { AssetDetailsPage } from "../features/assets/pages/AssetDetailsPage";
+import { BranchListPage } from "../features/branches/pages/BranchListPage";
+import { CreateBranchPage } from "../features/branches/pages/CreateBranchPage";
+import { EditBranchPage } from "../features/branches/pages/EditBranchPage";
+import { CategoryListPage } from "../features/category/pages/CategoryListPage";
+import { CategoryCreatePage } from "../features/category/pages/CategoryCreatePage";
+import { CategoryEditPage } from "../features/category/pages/CategoryEditPage";
 
 export const AppRouter = () => {
   return (
@@ -57,6 +63,60 @@ export const AppRouter = () => {
           <RequireAuth>
             <EditAssetPage />
           </RequireAuth>
+        }
+      />
+
+      <Route 
+        path="/branches"
+        element={
+          <RequireAuth>
+            <BranchListPage />
+          </RequireAuth>
+        } 
+      />
+
+      <Route 
+        path="/branches/new"
+        element={
+          <RequireRole role={["ADMIN", "FINANCE"]}>
+            <CreateBranchPage />
+          </RequireRole>
+        }
+      />
+
+      <Route 
+        path="/branches/:id/edit"
+        element={
+          <RequireRole role={["ADMIN", "FINANCE"]}>
+            <EditBranchPage />
+          </RequireRole>
+        }
+      />
+
+      <Route 
+        path="/categories"
+        element={
+          <RequireAuth>
+            <CategoryListPage />
+          </RequireAuth>
+        }
+      />
+
+      <Route 
+        path="/categories/new"
+        element={
+          <RequireRole role={["ADMIN", "FINANCE"]}>
+            <CategoryCreatePage />
+          </RequireRole>
+        }
+      />
+
+      <Route 
+        path="/categories/:id/edit"
+        element={
+          <RequireRole role={["ADMIN", "FINANCE"]}>
+            <CategoryEditPage />
+          </RequireRole>
         }
       />
 

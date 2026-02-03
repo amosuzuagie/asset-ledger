@@ -6,6 +6,7 @@ import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.model.Asset;
 import com.company.assetmgmt.model.AssetMovementHistory;
 import com.company.assetmgmt.model.Branch;
+import com.company.assetmgmt.model.enums.AssetStatus;
 import com.company.assetmgmt.repository.AssetMovementRepository;
 import com.company.assetmgmt.repository.AssetRepository;
 import com.company.assetmgmt.repository.BranchRepository;
@@ -28,6 +29,10 @@ public class AssetMovementServiceImpl implements AssetMovementService {
     public void moveAsset(AssetMovementRequest request) {
         Asset asset = assetRepository.findById(request.getAssetId())
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+
+        if (asset.getStatus() == AssetStatus.DISPOSED) {
+            throw new IllegalStateException("Disposed assets cannot be moved");
+        }
 
         Branch fromBranch = asset.getBranch();
         Branch toBranch = null;

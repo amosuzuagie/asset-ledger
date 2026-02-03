@@ -14,8 +14,8 @@ public class BranchRequest {
     @NotBlank
     private String state;
 
-    @NotBlank
     private String location;
+
 
     private String address;
 }

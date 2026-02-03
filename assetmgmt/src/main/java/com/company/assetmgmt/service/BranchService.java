@@ -8,8 +8,7 @@ import java.util.UUID;
 
 public interface BranchService {
     BranchResponse create(BranchRequest request);
-
     BranchResponse update(UUID id, BranchRequest request);
-
     List<BranchResponse> findAll();
+    BranchResponse getBranchById(UUID branchId);
 }

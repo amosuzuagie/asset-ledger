@@ -10,7 +10,7 @@ import java.util.UUID;
 public class BranchResponse {
     private UUID id;
     private String name;
-//    private String code;
+    private String code;
     private String state;
     private String location;
     private String address;

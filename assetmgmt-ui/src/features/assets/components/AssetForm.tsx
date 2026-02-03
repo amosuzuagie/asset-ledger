@@ -1,5 +1,10 @@
 import { useForm } from "react-hook-form";
 import type { AssetCreateRequest } from "../../../shared/types/asset";
+import { useEffect, useMemo, useState } from "react";
+import { type CategoryResponse } from "../../../shared/types/category";
+import { categoryApi } from "../../category/api";
+import type { BranchResponse } from "../../../shared/types/branch";
+import { branchApi } from "../../branches/api";
 
 type Props = {
   onSubmit: (data: AssetCreateRequest) => void;
@@ -11,8 +16,24 @@ export const AssetForm = ({ onSubmit, submitting, defaultValues }: Props) => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<AssetCreateRequest>({defaultValues});
+
+  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const [branches, setBranches] = useState<BranchResponse[]>([]);
+
+  const assetClass = watch("categoryId");
+
+  useEffect(() => {
+    categoryApi.getAll().then(setCategories)
+  }, []);
+
+  useEffect(() => {
+    branchApi.getAll().then(setBranches);
+  }, []);
+
+  const filteredCategories = useMemo(() => categories, [categories]);
 
   return (
     <form
@@ -51,15 +72,18 @@ export const AssetForm = ({ onSubmit, submitting, defaultValues }: Props) => {
       </div>
 
       {/* Category */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Category ID
-        </label>
-        <input
-          {...register("categoryId", { required: true })}
-          className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-        />
-      </div>
+      <select 
+        {...register("categoryId", {required: true})}
+        className="input"
+        defaultValue=""
+      >
+        <option value="" disabled>Select Category</option>
+        {filteredCategories.map(cat =>(
+          <option key={cat.id} value={cat.id}>
+            {cat.name} ({cat.assetClass})
+          </option>
+        ))}
+      </select>
 
       {/* Serial Number */}
       <div>
@@ -73,26 +97,32 @@ export const AssetForm = ({ onSubmit, submitting, defaultValues }: Props) => {
       </div>
 
       {/* Subsidiary */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Subsidiary
-        </label>
-        <input
-          {...register("subsidiary")}
-          className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-        />
-      </div>
+      <select 
+        {...register("subsidiary")}
+        className="input"
+        defaultValue=""
+      >
+        <option value="">Select Subsidiary</option>
+        <option value="WGC">WGC</option>
+        <option value="WGG">WGB</option>
+        <option value="OTHERS">Others</option>
+      </select>
 
       {/* Branch */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Branch ID
-        </label>
-        <input
-          {...register("branchId")}
-          className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-        />
-      </div>
+      <select
+        {...register("branchId")}
+        className="input"
+        defaultValue=""
+      >
+        <option value="">
+          Assign to Branch (optional)
+        </option>
+        {branches.map(branch => (
+          <option key={branch.id} value={branch.id}>
+            {branch.name} ({branch.code})
+          </option>
+        ))}
+      </select>
 
       {/* Date */}
       <div>

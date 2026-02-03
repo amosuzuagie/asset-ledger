@@ -5,6 +5,7 @@ import com.company.assetmgmt.dto.BranchResponse;
 import com.company.assetmgmt.model.Branch;
 import com.company.assetmgmt.repository.BranchRepository;
 import com.company.assetmgmt.service.BranchService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +19,28 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     public BranchResponse create(BranchRequest request) {
-//        if (branchRepository.existsByCode(request.getCode())) {
-//            throw new IllegalArgumentException("Branch code already exists");
-//        }
+        if (branchRepository.existsByCode(request.getCode())) {
+            throw new IllegalArgumentException("Branch code already exists");
+        }
 
         Branch branch = Branch.builder()
                 .name(request.getName())
-//                .code(request.getCode())
+                .code(request.getCode())
                 .state(request.getState())
                 .location(request.getLocation())
                 .address(request.getAddress())
                 .build();
-        return null;
+
+        branchRepository.save(branch);
+
+        return new BranchResponse(
+                branch.getId(),
+                branch.getName(),
+                branch.getCode(),
+                branch.getState(),
+                branch.getLocation(),
+                branch.getAddress()
+        );
     }
 
     @Override
@@ -38,6 +49,7 @@ public class BranchServiceImpl implements BranchService {
                 .orElseThrow(() -> new IllegalArgumentException("Branch not found"));
 
         branch.setName(request.getName());
+        branch.setCode(request.getCode());
         branch.setState(request.getState());
         branch.setLocation(request.getLocation());
         branch.setAddress(request.getAddress());
@@ -53,10 +65,19 @@ public class BranchServiceImpl implements BranchService {
                 .toList();
     }
 
+    @Override
+    public BranchResponse getBranchById(UUID branchId) {
+        Branch branch = branchRepository.findById(branchId)
+                .orElseThrow(() -> new EntityNotFoundException("Branch not found"));
+        return mapToResponse(branch);
+
+    }
+
     private BranchResponse mapToResponse(Branch branch) {
         return new BranchResponse(
                 branch.getId(),
                 branch.getName(),
+                branch.getCode(),
                 branch.getState(),
                 branch.getLocation(),
                 branch.getAddress()

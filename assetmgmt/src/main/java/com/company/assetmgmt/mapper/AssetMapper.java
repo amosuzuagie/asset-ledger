@@ -41,6 +41,8 @@ public class AssetMapper {
         );
         response.setAmount(asset.getAmount());
         response.setDateOfAcquisition(asset.getDateOfAcquisition());
+        response.setCostOfDisposal(asset.getCostOfDisposal());
+        response.setDisposalRemark(asset.getDisposalRemark());
         return response;
     }
 

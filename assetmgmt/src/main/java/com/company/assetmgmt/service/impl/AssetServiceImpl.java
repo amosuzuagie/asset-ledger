@@ -111,6 +111,16 @@ public class AssetServiceImpl implements AssetService {
         asset.setBranch(branch);
         asset.setStatus(AssetStatus.ASSIGNED);
 
+        AssetMovementHistory history = AssetMovementHistory.builder()
+                .asset(asset)
+                .fromBranch(asset.getBranch())
+                .toBranch(branch)
+                .reason("Asset assigned to " + branch.getName())
+                .movementDate(Instant.now())
+                .build();
+
+        movementRepository.save(history);
+
         auditService.log(
                 "ASSIGN_ASSET",
                 asset.getId(),
@@ -213,6 +223,7 @@ public class AssetServiceImpl implements AssetService {
 
         asset.setBranch(null);
         asset.setDisposed(true);
+        asset.setStatus(AssetStatus.DISPOSED);
         asset.setDateOfDisposal(LocalDate.now());
         asset.setDisposalRemark(request.getRemark());
         asset.setCostOfDisposal(request.getCostOfDisposal());

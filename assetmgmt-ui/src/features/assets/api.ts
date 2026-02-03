@@ -1,5 +1,5 @@
 import { http } from "../../shared/api/http";
-import type { AssetCreateRequest, AssetResponse } from "../../shared/types/asset";
+import type { AssetCreateRequest, AssetDisposalRequest, AssetMovementResponse, AssetResponse } from "../../shared/types/asset";
 
 
 export const assetApi = {
@@ -30,5 +30,27 @@ export const assetApi = {
     http.put(`/api/assets/${id}/restore`),
 
   assign: (assetId: string, branchId: string) =>
-    http.put(`/api/assets/${assetId}/assign/${branchId}`),
+    http.put<AssetResponse>(
+      `/api/assets/${assetId}/assign/${branchId}`
+    ).then(r => r.data),
+
+  dispose: (data: AssetDisposalRequest) =>
+  http.put("/api/assets/" + data.assetId + "/dispose", data),
+
+  getMovements: (assetId: string | undefined) =>
+    http
+      .get<AssetMovementResponse[]>(`/api/assets/${assetId}/movements`)
+      .then(r => r.data),
+};
+
+export const assetMovementApi = {
+  getByAsset: (assetId: string) =>
+    http.get<AssetMovementResponse[]>(
+      `/api/assets/${assetId}/movements`
+    ).then(res => res.data),
+
+    getMovements: (assetId: string | undefined) =>
+    http
+      .get<AssetMovementResponse[]>(`/api/assets/${assetId}/movements`)
+      .then(r => r.data),
 };

@@ -22,15 +22,14 @@ public class Branch extends BaseEntity{
     @Column(nullable = false)
     private String name;
 
-//    @Column(nullable = false, unique = true)
-//    private String code;
+    @Column(nullable = false, unique = true)
+    private String code;
 
     @Column(nullable = false)
     private String state;
 
-    @Column(nullable = false)
     private String location;
 
-    @Column
+    @Column(nullable = false)
     private String address;
 }

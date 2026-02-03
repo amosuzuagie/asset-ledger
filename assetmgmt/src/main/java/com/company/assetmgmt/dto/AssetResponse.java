@@ -30,4 +30,7 @@ public class AssetResponse {
 
     private BigDecimal amount;
     private LocalDate dateOfAcquisition;
+
+    private BigDecimal costOfDisposal;
+    private String disposalRemark;
 }

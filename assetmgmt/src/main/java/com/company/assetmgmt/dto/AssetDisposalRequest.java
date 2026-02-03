@@ -10,7 +10,6 @@ import java.util.UUID;
 public class AssetDisposalRequest {
     @NotNull
     private UUID assetId;
-
     private BigDecimal costOfDisposal;
     private String remark;
 }
