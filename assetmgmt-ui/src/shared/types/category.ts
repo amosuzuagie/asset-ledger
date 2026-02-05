@@ -1,4 +1,4 @@
-export type AssetClass = "FF" | "EQ" | "IT" | "VEHICLE"; 
+import type { AssetClass } from "./asset";
 
 export interface CategoryRequest {
   name: string;

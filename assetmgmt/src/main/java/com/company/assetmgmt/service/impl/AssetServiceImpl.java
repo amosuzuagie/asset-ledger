@@ -138,11 +138,9 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AssetResponse> getAllAssets() {
-        return assetRepository.findAll()
-                .stream()
-                .map(AssetMapper::toResponse)
-                .collect(Collectors.toList());
+    public Page<AssetResponse> getAllAssets(Pageable pageable) {
+        return assetRepository.findAll(pageable)
+                .map(AssetMapper::toResponse);
     }
 
     @Override
@@ -245,6 +243,13 @@ public class AssetServiceImpl implements AssetService {
         return response;
     }
 
+    @Override
+    public Page<AssetResponse> getDeletedAssets(Pageable pageable) {
+        Page<Asset> assets = assetRepository.findAllDeleted(pageable);
+
+        return assets.map(this::mapToResponse);
+    }
+
     // =============================
     // HELPERS
     // =============================
@@ -252,5 +257,23 @@ public class AssetServiceImpl implements AssetService {
     private Asset getAssetEntity(UUID assetId) {
         return assetRepository.findById(assetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+    }
+
+    private AssetResponse mapToResponse(Asset a) {
+        return new AssetResponse(
+                a.getId(),
+                a.getAssetCode(),
+                a.getDescription(),
+                a.getAssetClass(),
+                a.getCategory().getId(),
+                a.getCategory().getName(),
+                a.getStatus(),
+                a.getBranch().getId(),
+                a.getBranch().getName(),
+                a.getAmount(),
+                a.getDateOfAcquisition(),
+                a.getCostOfDisposal(),
+                a.getDisposalRemark()
+        );
     }
 }

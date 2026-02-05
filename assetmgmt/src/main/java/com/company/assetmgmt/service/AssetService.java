@@ -16,7 +16,7 @@ public interface AssetService {
 
     AssetResponse getAssetById(UUID assetId);
 
-    List<AssetResponse> getAllAssets();
+    Page<AssetResponse> getAllAssets(Pageable pageable);
 
     Page<AssetResponse> searchAssets(AssetSearchRequest filter, Pageable pageable);
 
@@ -25,4 +25,6 @@ public interface AssetService {
     void restoreAsset(UUID assetId);
 
     AssetDisposalResponse disposeAsset(AssetDisposalRequest request);
+
+    Page<AssetResponse> getDeletedAssets(Pageable pageable);
 }

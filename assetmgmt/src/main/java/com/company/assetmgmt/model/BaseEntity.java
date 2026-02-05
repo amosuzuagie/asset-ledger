@@ -17,7 +17,7 @@ import java.util.UUID;
 
 /**
  * Base entity class providing common fields for all entities.
- *
+ * -
  * Includes:
  * - UUID primary key
  * - Auditing fields (created/modified dates and users)

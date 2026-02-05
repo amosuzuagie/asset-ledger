@@ -70,8 +70,8 @@ public class AssetController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AssetResponse>> getAllAssets() {
-        return ResponseEntity.ok(assetService.getAllAssets());
+    public ResponseEntity<Page<AssetResponse>> getAllAssets(@ParameterObject @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(assetService.getAllAssets(pageable));
     }
 
     @PostMapping("/search")
@@ -97,7 +97,7 @@ public class AssetController {
     }
 
     @PostMapping("/move")
-    @PreAuthorize("hasAnyRole('ADMIN','FINANCE','MANAGERS')")
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCE')")
     public ResponseEntity<Void> moveAsset(@Valid @RequestBody AssetMovementRequest request) {
         assetMovementService.moveAsset(request);
         return ResponseEntity.ok().build();
@@ -106,5 +106,11 @@ public class AssetController {
     @GetMapping("/{asset_id}/movements")
     public ResponseEntity<List<AssetMovementResponse>> getAssetMovementHistory(@PathVariable("asset_id") UUID assetId) {
         return ResponseEntity.ok(assetMovementService.getAssetMovementHistory(assetId));
+    }
+
+    @GetMapping("/deleted")
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCE')")
+    public ResponseEntity<Page<AssetResponse>> getDeletedAssets(@PageableDefault(sort = "createdDate") Pageable pageable) {
+        return ResponseEntity.ok(assetService.getDeletedAssets(pageable));
     }
 }

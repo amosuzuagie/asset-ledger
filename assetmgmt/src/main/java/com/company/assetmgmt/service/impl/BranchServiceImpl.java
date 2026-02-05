@@ -3,10 +3,13 @@ package com.company.assetmgmt.service.impl;
 import com.company.assetmgmt.dto.BranchRequest;
 import com.company.assetmgmt.dto.BranchResponse;
 import com.company.assetmgmt.model.Branch;
+import com.company.assetmgmt.repository.AssetRepository;
 import com.company.assetmgmt.repository.BranchRepository;
 import com.company.assetmgmt.service.BranchService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BranchServiceImpl implements BranchService {
     private final BranchRepository branchRepository;
+    private final AssetRepository assetRepository;
 
     @Override
     public BranchResponse create(BranchRequest request) {
@@ -71,6 +75,35 @@ public class BranchServiceImpl implements BranchService {
                 .orElseThrow(() -> new EntityNotFoundException("Branch not found"));
         return mapToResponse(branch);
 
+    }
+
+    @Override
+    public void deleteBranch(UUID branchId) {
+        Branch branch = branchRepository.findById(branchId)
+                .orElseThrow(() -> new EntityNotFoundException("Branch not found."));
+
+        if (assetRepository.existsByBranchId(branchId)) {
+            throw new IllegalStateException("Cannot delete branch. Assets are still assigned to this branch.");
+        }
+
+        branch.markDeleted();
+        branchRepository.save(branch);
+    }
+
+    @Override
+    public void restoreBranch(UUID branchId) {
+        Branch branch = branchRepository.findDeletedById(branchId);
+
+        branch.restore();
+        branchRepository.save(branch);
+
+    }
+
+    @Override
+    public Page<BranchResponse> getDeletedBranches(Pageable pageable) {
+        Page<Branch> branches = branchRepository.findAllDeleted(pageable);
+
+        return branches.map(this::mapToResponse);
     }
 
     private BranchResponse mapToResponse(Branch branch) {

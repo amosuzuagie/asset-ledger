@@ -1,13 +1,17 @@
+export type AssetClass = "FF" | "EQ" | "IT" | "VEHICLE";
+
+export type AssetStatus = 'IN_STORE' | 'ASSIGNED' | 'DISPOSED';
+
 export type AssetResponse = {
   id: string;
   assetCode: string;
   description: string;
-  assetClass: 'FF' | 'EQ' | 'IT' | 'VEHICLE';
+  assetClass: AssetClass;
 
   categoryId: string;
   categoryName: string;
 
-  status: 'IN_STORE' | 'ASSIGNED' | 'DISPOSED';
+  status: AssetStatus;
 
   branchId?: string;
   branchName?: string;
@@ -50,3 +54,31 @@ export type AssetMovementResponse = {
   reason?: string;
   movementDate: string; // Instant → ISO string
 };
+
+export type AssetSearchRequest = {
+  assetCode?: string;
+  description?: string;
+
+  assetClass?: AssetClass;
+  categoryId?: string;
+  branchId?: string;
+
+  status?: AssetStatus;
+  subsidiary?: string;
+
+  acquiredFrom?: string; // ISO date string
+  acquiredTo?: string;
+};
+
+export const ASSET_CLASSES: AssetClass[] = [
+  "FF",
+  "EQ",
+  "IT",
+  "VEHICLE",
+];
+
+export const ASSET_STATUSES: AssetStatus[] = [
+  "IN_STORE",
+  "ASSIGNED",
+  "DISPOSED",
+];

@@ -1,10 +1,11 @@
 import { http } from "../../shared/api/http";
-import type { AssetCreateRequest, AssetDisposalRequest, AssetMovementResponse, AssetResponse } from "../../shared/types/asset";
+import type { AssetCreateRequest, AssetDisposalRequest, AssetMovementResponse, AssetResponse, AssetSearchRequest } from "../../shared/types/asset";
+import type { Page } from "../../shared/types/page";
 
 
 export const assetApi = {
-  getAll: () =>
-    http.get<AssetResponse[]>('/api/assets')
+  getAll: (page = 0, size = 20) =>
+    http.get<Page<AssetResponse>>(`/api/assets?page=${page}&size=${size}`)
       .then(r => r.data),
 
   getById: (id: string) =>
@@ -41,6 +42,12 @@ export const assetApi = {
     http
       .get<AssetMovementResponse[]>(`/api/assets/${assetId}/movements`)
       .then(r => r.data),
+
+  search: (filter: AssetSearchRequest, page = 0, size = 20) =>
+  http.post<Page<AssetResponse>>(
+    `/api/assets/search?page=${page}&size=${size}`,
+    filter
+  ).then(r => r.data),
 };
 
 export const assetMovementApi = {

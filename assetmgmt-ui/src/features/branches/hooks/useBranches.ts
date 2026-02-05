@@ -1,20 +1,25 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { BranchResponse } from "../../../shared/types/branch";
 import { branchApi } from "../api";
 
 export const useBranches = () => {
   const [branches, setBranches] = useState<BranchResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const fetchedRef = useRef(false); // 🔑 THIS IS THE KEY
 
   useEffect(() => {
-    if (fetchedRef.current) return;
-
-    fetchedRef.current = true;
+    let mounted = true;
 
     branchApi.getAll()
-      .then(setBranches)
-      .finally(() => setLoading(false));
+      .then(data => {
+        if (mounted) setBranches(data);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return { branches, loading };

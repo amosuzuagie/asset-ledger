@@ -16,6 +16,7 @@ import { EditBranchPage } from "../features/branches/pages/EditBranchPage";
 import { CategoryListPage } from "../features/category/pages/CategoryListPage";
 import { CategoryCreatePage } from "../features/category/pages/CategoryCreatePage";
 import { CategoryEditPage } from "../features/category/pages/CategoryEditPage";
+import { BranchDetailPage } from "../features/branches/pages/BranchDetailPage";
 
 export const AppRouter = () => {
   return (
@@ -90,6 +91,15 @@ export const AppRouter = () => {
           <RequireRole role={["ADMIN", "FINANCE"]}>
             <EditBranchPage />
           </RequireRole>
+        }
+      />
+
+      <Route
+        path="/branches/:id"
+        element={
+          <RequireAuth>
+            <BranchDetailPage />
+          </RequireAuth>
         }
       />
 

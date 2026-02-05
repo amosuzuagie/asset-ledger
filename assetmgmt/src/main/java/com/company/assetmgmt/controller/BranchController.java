@@ -6,6 +6,9 @@ import com.company.assetmgmt.service.BranchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -50,5 +53,25 @@ public class BranchController {
     public ResponseEntity<BranchResponse> getById(@PathVariable UUID branchId) {
         System.out.println("DEBUGGING: Get Branch by ID: " + branchId);
         return ResponseEntity.ok(branchService.getBranchById(branchId));
+    }
+
+    @DeleteMapping("/{branchId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteBranch(@PathVariable UUID branchId) {
+        branchService.deleteBranch(branchId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{branchId}/restore")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> restoreBranch(@PathVariable UUID branchId) {
+        branchService.restoreBranch(branchId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/deleted")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<BranchResponse>> getDeletedBranches(@PageableDefault(sort = "createdDate")Pageable pageable) {
+        return ResponseEntity.ok(branchService.getDeletedBranches(pageable));
     }
 }

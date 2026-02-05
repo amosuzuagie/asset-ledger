@@ -5,6 +5,7 @@ import { branchApi } from "../api";
 import { ActionButton } from "../../../shared/components/buttons/ActionButton";
 import { BranchTable } from "../components/BranchTable";
 import { useHasRole } from "../../../shared/hooks/useHasRole";
+import { handleApiError } from "../../../shared/api/handleApiError";
 
 export const BranchListPage = () => {
     const [branches, setBranches] = useState<BranchResponse[]>([]);
@@ -13,6 +14,17 @@ export const BranchListPage = () => {
     useEffect(() => {
         branchApi.getAll().then(setBranches);
     }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Delete this branch?")) return;
+
+        try {
+            await branchApi.delete(id);
+            setBranches(prev => prev.filter(b => b.id !== id));
+        } catch (e: any) {
+            alert(handleApiError(e))
+        }
+    }
 
     const isAdmin = useHasRole("ADMIN");
 
@@ -30,7 +42,8 @@ export const BranchListPage = () => {
 
             <BranchTable
                 branches={branches}
-                onEdit={id => navigate(`/branches/${id}/edit`)}
+                // onEdit={id => navigate(`/branches/${id}/edit`)}
+                onDelete={handleDelete}
             />
         </div>
     );
