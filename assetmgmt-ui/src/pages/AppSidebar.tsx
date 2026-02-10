@@ -20,7 +20,7 @@ export const Sidebar = () => {
       >
         <img src="/asset.png" alt="AssetMgmt" className="h-8 w-8" />
         <span className="text-white font-semibold text-lg">
-          AssetMgmt
+          WGG Assets
         </span>
       </div>
 
