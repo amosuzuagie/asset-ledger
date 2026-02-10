@@ -6,8 +6,10 @@ import com.company.assetmgmt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Order(2)
 @Configuration
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
