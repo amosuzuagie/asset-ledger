@@ -86,10 +86,12 @@ export const AssetListPage = () => {
       </div>
 
       {/* Search */}
-      <AssetSearchPanel
+      {pageData.content.length > 0 && (
+        <AssetSearchPanel
         onSearch={handleFilterChange}
         onReset={loadAll}
       />
+      )}
 
       {/* Table */}
       <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
