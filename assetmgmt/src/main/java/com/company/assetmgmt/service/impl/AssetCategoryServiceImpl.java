@@ -2,6 +2,8 @@ package com.company.assetmgmt.service.impl;
 
 import com.company.assetmgmt.dto.CategoryRequest;
 import com.company.assetmgmt.dto.CategoryResponse;
+import com.company.assetmgmt.exception.BusinessRuleException;
+import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.model.AssetCategory;
 import com.company.assetmgmt.repository.AssetCategoryRepository;
 import com.company.assetmgmt.service.AssetCategoryService;
@@ -25,7 +27,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
         );
 
         if (exists) {
-            throw new IllegalStateException("Category already exists for asset class");
+            throw new BusinessRuleException("Category already exists for asset class");
         }
 
         AssetCategory category = repository.save(
@@ -42,7 +44,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
     @Override
     public CategoryResponse update(UUID categoryId, CategoryRequest request) {
         AssetCategory category = repository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
         category.setName(request.name());
         category.setAssetClass(request.assetClass());
@@ -64,7 +66,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
     @Override
     public CategoryResponse getCategoryById(UUID categoryId) {
         AssetCategory category = repository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         return toResponse(category);
 
     }

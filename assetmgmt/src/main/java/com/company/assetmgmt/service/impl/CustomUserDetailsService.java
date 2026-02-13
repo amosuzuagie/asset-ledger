@@ -1,5 +1,6 @@
 package com.company.assetmgmt.service.impl;
 
+import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.model.User;
 import com.company.assetmgmt.repository.UserRepository;
 import com.company.assetmgmt.security.CustomUserDetails;
@@ -21,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with email: " + email)
+                        new ResourceNotFoundException("User not found with email: " + email)
                 );
 
         return new CustomUserDetails(user);

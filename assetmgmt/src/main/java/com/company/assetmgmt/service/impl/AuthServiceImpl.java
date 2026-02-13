@@ -2,6 +2,7 @@ package com.company.assetmgmt.service.impl;
 
 import com.company.assetmgmt.config.JwtUtil;
 import com.company.assetmgmt.dto.*;
+import com.company.assetmgmt.exception.BusinessRuleException;
 import com.company.assetmgmt.model.enums.Role;
 import com.company.assetmgmt.model.User;
 import com.company.assetmgmt.repository.UserRepository;
@@ -47,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already in use");
+            throw new BusinessRuleException("Email already in use");
         }
         User user = User.builder()
                 .email(request.getEmail())

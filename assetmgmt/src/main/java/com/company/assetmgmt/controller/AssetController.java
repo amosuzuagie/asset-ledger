@@ -76,7 +76,7 @@ public class AssetController {
 
     @PostMapping("/search")
     public Page<AssetResponse> searchAssets(
-            @RequestBody AssetSearchRequest filter,
+            @RequestBody @Valid AssetSearchRequest filter,
             @ParameterObject @PageableDefault(size = 20) Pageable pageable
     ) {
         return assetService.searchAssets(filter, pageable);
@@ -96,7 +96,7 @@ public class AssetController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/move")
+    @PostMapping("/assign")
     @PreAuthorize("hasAnyRole('ADMIN','FINANCE')")
     public ResponseEntity<Void> moveAsset(@Valid @RequestBody AssetMovementRequest request) {
         assetMovementService.moveAsset(request);

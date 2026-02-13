@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 public class AssetDisposalRequest {
-    @NotNull
+    @NotNull(message = "Asset is required")
     private UUID assetId;
     private BigDecimal costOfDisposal;
     private String remark;

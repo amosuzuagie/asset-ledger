@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Data
 public class AssetMovementRequest {
-    @NotNull
+    @NotNull(message = "Asset is required")
     private UUID assetId;
 
     private UUID toBranchId;

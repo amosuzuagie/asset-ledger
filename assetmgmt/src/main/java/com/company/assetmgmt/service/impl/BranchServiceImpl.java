@@ -2,6 +2,8 @@ package com.company.assetmgmt.service.impl;
 
 import com.company.assetmgmt.dto.BranchRequest;
 import com.company.assetmgmt.dto.BranchResponse;
+import com.company.assetmgmt.exception.BusinessRuleException;
+import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.model.Branch;
 import com.company.assetmgmt.repository.AssetRepository;
 import com.company.assetmgmt.repository.BranchRepository;
@@ -24,7 +26,7 @@ public class BranchServiceImpl implements BranchService {
     @Override
     public BranchResponse create(BranchRequest request) {
         if (branchRepository.existsByCode(request.getCode())) {
-            throw new IllegalArgumentException("Branch code already exists");
+            throw new BusinessRuleException("Branch code already exists");
         }
 
         Branch branch = Branch.builder()
@@ -50,7 +52,7 @@ public class BranchServiceImpl implements BranchService {
     @Override
     public BranchResponse update(UUID id, BranchRequest request) {
         Branch branch = branchRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Branch not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
 
         branch.setName(request.getName());
         branch.setCode(request.getCode());
@@ -72,7 +74,7 @@ public class BranchServiceImpl implements BranchService {
     @Override
     public BranchResponse getBranchById(UUID branchId) {
         Branch branch = branchRepository.findById(branchId)
-                .orElseThrow(() -> new EntityNotFoundException("Branch not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
         return mapToResponse(branch);
 
     }
@@ -80,7 +82,7 @@ public class BranchServiceImpl implements BranchService {
     @Override
     public void deleteBranch(UUID branchId) {
         Branch branch = branchRepository.findById(branchId)
-                .orElseThrow(() -> new EntityNotFoundException("Branch not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Branch not found."));
 
         if (assetRepository.existsByBranchId(branchId)) {
             throw new IllegalStateException("Cannot delete branch. Assets are still assigned to this branch.");

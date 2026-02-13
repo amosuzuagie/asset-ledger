@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +31,5 @@ public class BranchScopeServiceImpl implements BranchScopeService {
 
         UUID userId = SecurityUtil.getCurrentUserId();
         return userBranchRepository.findBranchIdsByUserId(userId);
-
-//        return userBranchRepository.findByUserId(userId)
-//                .stream()
-//                .map(ub -> ub.getBranch().getId())
-//                .collect(Collectors.toSet());
     }
 }

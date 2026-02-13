@@ -2,6 +2,8 @@ package com.company.assetmgmt.service.impl;
 
 import com.company.assetmgmt.dto.AssignManagerRequest;
 import com.company.assetmgmt.dto.BranchManagerResponse;
+import com.company.assetmgmt.exception.BusinessRuleException;
+import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.model.Branch;
 import com.company.assetmgmt.model.User;
 import com.company.assetmgmt.model.UserBranch;
@@ -32,19 +34,19 @@ public class BranchAssignmentServiceImpl implements BranchAssignmentService {
     public void assignManagerToBranch(AssignManagerRequest request) {
 
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (user.getRoles() != Role.MANAGERS) {
-            throw new IllegalStateException("User is not a manager");
+            throw new BusinessRuleException("User is not a manager");
         }
 
         Branch branch = branchRepository.findById(request.getBranchId())
-                .orElseThrow(() -> new IllegalArgumentException("Branch not found"));
+                .orElseThrow(() -> new BusinessRuleException("Branch not found"));
 
         userBranchRepository
                 .findByUserIdAndBranchId(user.getId(), branch.getId())
                 .ifPresent(ub -> {
-                    throw new IllegalStateException("Manager already assigned to branch");
+                    throw new BusinessRuleException("Manager already assigned to branch");
                 });
 
         UserBranch userBranch = UserBranch.builder()

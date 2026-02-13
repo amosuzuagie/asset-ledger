@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -46,7 +44,7 @@ public class AssetServiceImpl implements AssetService {
 
         // Asset code must be unique
         if (assetRepository.existsByAssetCode(request.getAssetCode())) {
-            throw new IllegalStateException("Asset code already exists");
+            throw new BusinessRuleException("Asset code already exists");
         }
 
         AssetCategory category = categoryRepository.findById(categoryId)
@@ -64,20 +62,24 @@ public class AssetServiceImpl implements AssetService {
 
         assetRepository.save(asset);
 
+        if (request.getBranchId() != null) {
+            this.assignAssetToBranch(asset.getId(), request.getBranchId());
+        }
+
         return AssetMapper.toResponse(asset);
     }
 
     @Override
     public AssetResponse updateAsset(UUID assetId, AssetUpdateRequest request, UUID categoryId) {
         if (!SecurityUtil.hasRole("ADMIN") || !SecurityUtil.hasRole("FINANCE")) {
-            throw new SecurityException("You are not allowed to update assets");
+            throw new BusinessRuleException("You are not allowed to update assets");
         }
 
         Asset existing = assetRepository.findById(assetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
 
         if (existing.isDisposed()) {
-            throw new IllegalStateException("Disposed asset cannot be modified");
+            throw new BusinessRuleException("Disposed asset cannot be modified");
         }
 
         //Prevent asset class changes
@@ -88,7 +90,7 @@ public class AssetServiceImpl implements AssetService {
                     .orElseThrow(() -> new ResourceNotFoundException("Asset category not found"));
 
             if (!category.getAssetClass().equals(existingClass)) {
-                throw new IllegalStateException("Category does not belong to asset class: " + existingClass);
+                throw new BusinessRuleException("Category does not belong to asset class: " + existingClass);
             }
             existing.setCategory(category);
         }
@@ -101,7 +103,7 @@ public class AssetServiceImpl implements AssetService {
         Asset asset = getAssetEntity(assetId);
 
         if (asset.getStatus() == AssetStatus.DISPOSED) {
-            throw new IllegalStateException("Disposed asset cannot be reassigned");
+            throw new BusinessRuleException("Disposed asset cannot be reassigned");
         }
 
         Branch branch = branchRepository.findById(branchId)
@@ -205,7 +207,7 @@ public class AssetServiceImpl implements AssetService {
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
 
         if (asset.isDisposed()) {
-            throw new IllegalStateException("Asset already disposed");
+            throw new BusinessRuleException("Asset already disposed");
         }
 
         // Record final movement

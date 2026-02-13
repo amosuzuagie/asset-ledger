@@ -5,13 +5,13 @@ import lombok.Data;
 
 @Data
 public class BranchRequest {
-    @NotBlank
+    @NotBlank(message = "Branch name is required")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Branch code is required")
     private String code;
 
-    @NotBlank
+    @NotBlank(message = "State is required")
     private String state;
 
     private String location;

@@ -7,9 +7,9 @@ import java.util.UUID;
 
 @Data
 public class AssignManagerRequest {
-    @NotNull
+    @NotNull(message = "User ID is required")
     private UUID userId;
 
-    @NotNull
+    @NotNull(message = "Branch ID is required")
     private UUID branchId;
 }

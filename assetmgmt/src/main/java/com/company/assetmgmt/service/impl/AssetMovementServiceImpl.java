@@ -2,6 +2,7 @@ package com.company.assetmgmt.service.impl;
 
 import com.company.assetmgmt.dto.AssetMovementRequest;
 import com.company.assetmgmt.dto.AssetMovementResponse;
+import com.company.assetmgmt.exception.BusinessRuleException;
 import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.model.Asset;
 import com.company.assetmgmt.model.AssetMovementHistory;
@@ -31,7 +32,7 @@ public class AssetMovementServiceImpl implements AssetMovementService {
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
 
         if (asset.getStatus() == AssetStatus.DISPOSED) {
-            throw new IllegalStateException("Disposed assets cannot be moved");
+            throw new BusinessRuleException("Disposed assets cannot be moved");
         }
 
         Branch fromBranch = asset.getBranch();
@@ -40,6 +41,8 @@ public class AssetMovementServiceImpl implements AssetMovementService {
         if (request.getToBranchId() != null) {
             toBranch = branchRepository.findById(request.getToBranchId())
                     .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
+
+            System.out.println("###TO_BRANCH: " + toBranch.getName());
         }
 
         AssetMovementHistory history = AssetMovementHistory.builder()
@@ -49,6 +52,7 @@ public class AssetMovementServiceImpl implements AssetMovementService {
                 .reason(request.getReason())
                 .movementDate(Instant.now())
                 .build();
+        System.out.println("FROM_BRANCH: " + fromBranch + "TO_BRANCH: " + toBranch);
 
         movementRepository.save(history);
 

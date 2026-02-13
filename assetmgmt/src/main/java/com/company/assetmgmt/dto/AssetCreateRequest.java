@@ -10,13 +10,13 @@ import java.util.UUID;
 
 @Data
 public class AssetCreateRequest {
-    @NotBlank
+    @NotBlank(message = "Asset code is required")
     private String assetCode;
 
-    @NotBlank
+    @NotBlank(message = "Description is required")
     private String description;
 
-    @NotNull
+    @NotNull(message = "Category ID is required")
     private UUID categoryId;
 
     private String serialNumber;
