@@ -11,6 +11,7 @@ import com.company.assetmgmt.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,24 +26,28 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        var authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(), request.getPassword()
-                )
-        );
+        try {
+            var authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(), request.getPassword()
+                    )
+            );
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        assert userDetails != null;
-        String token = jwtUtil.generateToken(userDetails);
+            assert userDetails != null;
+            String token = jwtUtil.generateToken(userDetails);
 
-        return new LoginResponse(token, new UserSummary(
-                userDetails.getUser().getId(),
-                userDetails.getUser().getEmail(),
-                userDetails.getUser().getFirstName(),
-                userDetails.getUser().getLastName(),
-                userDetails.getUser().getRoles().name()
-        ));
+            return new LoginResponse(token, new UserSummary(
+                    userDetails.getUser().getId(),
+                    userDetails.getUser().getEmail(),
+                    userDetails.getUser().getFirstName(),
+                    userDetails.getUser().getLastName(),
+                    userDetails.getUser().getRoles().name()
+            ));
+        } catch (AuthenticationException ex) {
+            throw new BusinessRuleException("Invalid email or password");
+        }
     }
 
     @Override

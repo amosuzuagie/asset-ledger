@@ -7,7 +7,6 @@ import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.model.AssetCategory;
 import com.company.assetmgmt.repository.AssetCategoryRepository;
 import com.company.assetmgmt.service.AssetCategoryService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

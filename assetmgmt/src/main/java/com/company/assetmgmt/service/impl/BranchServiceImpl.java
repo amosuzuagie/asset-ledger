@@ -8,7 +8,6 @@ import com.company.assetmgmt.model.Branch;
 import com.company.assetmgmt.repository.AssetRepository;
 import com.company.assetmgmt.repository.BranchRepository;
 import com.company.assetmgmt.service.BranchService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
