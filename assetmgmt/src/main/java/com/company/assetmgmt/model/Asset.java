@@ -1,6 +1,5 @@
 package com.company.assetmgmt.model;
 
-import com.company.assetmgmt.model.enums.AssetClass;
 import com.company.assetmgmt.model.enums.AssetStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,22 +29,26 @@ public class Asset extends BaseEntity {
      ======================= */
 
     @Column(name = "asset_code", nullable = false, unique = true, length = 100)
-    private String assetCode;
+    private String tagId;
+//    private String assetCode;
 
     @Column(name = "description", nullable = false)
-    private String description;
+    private String assetName;
+//    private String description;
 
     /* =======================
        CLASSIFICATION
      ======================= */
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "asset_class", nullable = false, length = 20)
-    private AssetClass assetClass;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "asset_class", nullable = false, length = 20)
+//    private AssetClass assetClass;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private AssetCategory category;
+
+    private String location;
 
     /* =======================
        IDENTIFICATION DETAILS
@@ -91,7 +94,7 @@ public class Asset extends BaseEntity {
     @Column(name = "cost_of_disposal", precision = 15, scale = 2)
     private BigDecimal costOfDisposal;
 
-    @Column(name = "disposal_remark", length = 255)
+    @Column(name = "disposal_remark")
     private String disposalRemark;
 
     /* =======================

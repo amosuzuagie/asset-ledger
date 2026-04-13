@@ -4,9 +4,9 @@ export type AssetStatus = 'IN_STORE' | 'ASSIGNED' | 'DISPOSED';
 
 export type AssetResponse = {
   id: string;
-  assetCode: string;
-  description: string;
-  assetClass: AssetClass;
+  tagId: string;
+  assetName: string;
+  location?: string;
 
   categoryId: string;
   categoryName: string;
@@ -24,11 +24,12 @@ export type AssetResponse = {
 };
 
 export type AssetCreateRequest = {
-  assetCode: string;
-  description: string;
+  tagId: string;
+  assetName: string;
   categoryId: string;
   serialNumber?: string;
   dateOfAcquisition?: string;
+  location?: string;
   amount?: number;
   subsidiary?: string;
   remark?: string;

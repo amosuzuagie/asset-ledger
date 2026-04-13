@@ -12,7 +12,6 @@ export const CategoryTable = ({ categories, onEdit }: Props) => {
             <thead className="bg-gray-100">
                 <tr>
                     <th className="p-2 text-left">Name</th>
-                    <th className="p-2 text-left">Asset Class</th>
                     <th className="p-2 text-left">Description</th>
                     <th className="p-2">Actions</th>
                 </tr>
@@ -21,7 +20,6 @@ export const CategoryTable = ({ categories, onEdit }: Props) => {
                 {categories.map(cat => (
                     <tr key={cat.id} className="border-t">
                         <td className="p-2">{cat.name}</td>
-                        <td className="p-2">{cat.assetClass}</td>
                         <td className="p-2">{cat.description ?? "-"}</td>
                         <td className="p-2 text-center">
                             <ActionButton 

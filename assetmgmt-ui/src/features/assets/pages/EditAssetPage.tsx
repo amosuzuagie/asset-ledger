@@ -50,12 +50,13 @@ export const EditAssetPage = () => {
         onSubmit={handleUpdate}
         submitting={submitting}
         defaultValues={{
-          assetCode: asset.assetCode,
-          description: asset.description,
+          tagId: asset.tagId,
+          assetName: asset.assetName,
           categoryId: asset.categoryId, // must exist in response
           amount: asset.amount,
           dateOfAcquisition: asset.dateOfAcquisition,
           branchId: asset.branchId,
+          location: asset.location,
         }}
       />
     </div>

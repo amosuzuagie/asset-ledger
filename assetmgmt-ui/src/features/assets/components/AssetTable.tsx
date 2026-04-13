@@ -14,8 +14,8 @@ export const AssetTable = ({ assets, onEdit, onView, onDelete }: Props) => {
     <table className="w-full border-collapse text-sm">
       <thead className="bg-gray-50">
         <tr>
-          <th className="px-4 py-3 text-left font-medium text-gray-600">Code</th>
-          <th className="px-4 py-3 text-left font-medium text-gray-600">Class</th>
+          <th className="px-4 py-3 text-left font-medium text-gray-600">Tag ID</th>
+          <th className="px-4 py-3 text-left font-medium text-gray-600">Asset Name</th>
           <th className="px-4 py-3 text-left font-medium text-gray-600">Status</th>
           <th className="px-4 py-3 text-left font-medium text-gray-600">Amount</th>
           <th className="px-4 py-3 text-left font-medium text-gray-600">Actions</th>
@@ -29,10 +29,10 @@ export const AssetTable = ({ assets, onEdit, onView, onDelete }: Props) => {
             className="hover:bg-gray-50 transition"
           >
             <td className="px-4 py-3 font-mono text-gray-800">
-              {asset.assetCode}
+              {asset.tagId}
             </td>
             <td className="px-4 py-3 text-gray-700">
-              {asset.assetClass}
+              {asset.assetName}
             </td>
             <td className="px-4 py-3">
               <span

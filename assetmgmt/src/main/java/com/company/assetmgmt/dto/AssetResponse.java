@@ -1,6 +1,5 @@
 package com.company.assetmgmt.dto;
 
-import com.company.assetmgmt.model.enums.AssetClass;
 import com.company.assetmgmt.model.enums.AssetStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,10 +14,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class AssetResponse {
     private UUID id;
-    private String assetCode;
-    private String description;
+    private String tagId;
+    private String assetName;
+    private String location;
 
-    private AssetClass assetClass;
+//    private AssetClass assetClass;
 
     private UUID categoryId;
     private String categoryName;

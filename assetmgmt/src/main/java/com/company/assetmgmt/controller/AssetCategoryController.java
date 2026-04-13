@@ -1,10 +1,7 @@
 package com.company.assetmgmt.controller;
 
-import com.company.assetmgmt.dto.BranchRequest;
-import com.company.assetmgmt.dto.BranchResponse;
 import com.company.assetmgmt.dto.CategoryRequest;
 import com.company.assetmgmt.dto.CategoryResponse;
-import com.company.assetmgmt.model.AssetCategory;
 import com.company.assetmgmt.service.AssetCategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

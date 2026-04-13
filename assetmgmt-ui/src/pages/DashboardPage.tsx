@@ -23,7 +23,7 @@ export default function DashboardPage() {
       <Header user={user} logout={logout} />
       <Overview summary={data} />
       <Breakdown title="Assets by Status" data={data.assetsByStatus} />
-      <Breakdown title="Assets by Class" data={data.assetsByClass} />
+      {/* <Breakdown title="Assets by Class" data={data.assetsByClass} /> */}
       <Breakdown title="Assets by Branch" data={data.assetsByBranch} />
     </div>
   );

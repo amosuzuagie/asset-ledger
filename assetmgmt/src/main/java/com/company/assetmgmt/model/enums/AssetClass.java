@@ -4,5 +4,9 @@ public enum AssetClass {
     FF,        // Furniture & Fittings
     EQ,        // Equipment
     IT,        // IT Assets
-    VEHICLE
+    VEHICLE,
+    EQUIPMENT,
+    FURNITURE,
+    LAND_AND_BUILDING,
+    PLANT_AND_MACHINERY,
 }

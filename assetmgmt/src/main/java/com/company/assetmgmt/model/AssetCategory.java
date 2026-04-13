@@ -1,6 +1,5 @@
 package com.company.assetmgmt.model;
 
-import com.company.assetmgmt.model.enums.AssetClass;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,9 +20,9 @@ public class AssetCategory extends BaseEntity{
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "asset_class", nullable = false)
-    private AssetClass assetClass;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "asset_class", nullable = false)
+//    private AssetClass assetClass;
 
     @Column(length = 500)
     private String description;

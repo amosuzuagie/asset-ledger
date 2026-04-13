@@ -42,11 +42,11 @@ public class AssetReportController {
         return reportService.getAssetsByCategory();
     }
 
-    @GetMapping("/by-asset-class")
-    @PreAuthorize("hasAnyRole('ADMIN','FINANCE','DIRECTORS')")
-    public List<CountReport> byAssetClass() {
-        return reportService.getAssetsByAssetClass();
-    }
+//    @GetMapping("/by-asset-class")
+//    @PreAuthorize("hasAnyRole('ADMIN','FINANCE','DIRECTORS')")
+//    public List<CountReport> byAssetClass() {
+//        return reportService.getAssetsByAssetClass();
+//    }
 
     @GetMapping("/financial-summary")
     @PreAuthorize("hasAnyRole('ADMIN','FINANCE','DIRECTORS')")

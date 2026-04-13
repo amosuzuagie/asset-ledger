@@ -13,9 +13,8 @@ public class DashboardSummary {
     private BigDecimal totalAssetValue;
 
     private Map<String, Long> assetsByStatus;
-    private Map<String, Long> assetsByClass;
     private Map<String, Long> assetsByBranch;
 
-    private Map<String, BigDecimal> assetValueByClass;
+//    private Map<String, BigDecimal> assetValueByClass;
     private Map<String, BigDecimal> assetValueByBranch;
 }

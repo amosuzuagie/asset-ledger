@@ -53,15 +53,15 @@ public interface AssetReportRepository extends JpaRepository<Asset, UUID> {
     List<CountReport> assetsByCategory();
 
     // By asset class
-    @Query("""
-        SELECT new com.company.assetmgmt.dto.report.CountReport(
-            CAST(a.assetClass AS string),
-            COUNT(a)
-        )
-        FROM Asset a
-        GROUP BY a.assetClass
-    """)
-    List<CountReport> assetsByAssetClass();
+//    @Query("""
+//        SELECT new com.company.assetmgmt.dto.report.CountReport(
+//            CAST(a.assetClass AS string),
+//            COUNT(a)
+//        )
+//        FROM Asset a
+//        GROUP BY a.assetClass
+//    """)
+//    List<CountReport> assetsByAssetClass();
 
     // Financial summary
     @Query("""

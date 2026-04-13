@@ -11,15 +11,17 @@ import java.util.UUID;
 @Data
 public class AssetCreateRequest {
     @NotBlank(message = "Asset code is required")
-    private String assetCode;
+    private String tagId;
 
-    @NotBlank(message = "Description is required")
-    private String description;
+    @NotBlank(message = "Asset name is required")
+    private String assetName;
 
     @NotNull(message = "Category ID is required")
     private UUID categoryId;
 
     private String serialNumber;
+
+    private String location;
 
     private LocalDate dateOfAcquisition;
 

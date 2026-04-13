@@ -20,10 +20,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 
     @Override
     public CategoryResponse create(CategoryRequest request) {
-        boolean exists = repository.existsByNameAndAssetClass(
-                request.name(),
-                request.assetClass()
-        );
+        boolean exists = repository.existsByName(request.name());
 
         if (exists) {
             throw new BusinessRuleException("Category already exists for asset class");
@@ -32,7 +29,6 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
         AssetCategory category = repository.save(
                 AssetCategory.builder()
                         .name(request.name())
-                        .assetClass(request.assetClass())
                         .description(request.description())
                         .build()
         );
@@ -46,7 +42,6 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
         category.setName(request.name());
-        category.setAssetClass(request.assetClass());
         category.setDescription(request.description());
 
         repository.save(category);
@@ -74,7 +69,6 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
         return new CategoryResponse(
                 category.getId(),
                 category.getName(),
-                category.getAssetClass(),
                 category.getDescription()
         );
     }

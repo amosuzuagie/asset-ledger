@@ -1,7 +1,6 @@
 package com.company.assetmgmt.specification;
 
 import com.company.assetmgmt.model.*;
-import com.company.assetmgmt.model.enums.AssetClass;
 import com.company.assetmgmt.model.enums.AssetStatus;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -15,23 +14,23 @@ public final class AssetSpecification {
 
     private AssetSpecification () {}
 
-    public static Specification<Asset> hasAssetCodeLike(String assetCode) {
+    public static Specification<Asset> hasAssetTagIdLike(String tagId) {
         return (root, query, cb) ->
-                assetCode == null ? null : cb.like(
-                        cb.lower(root.get("assetCode")), "%" + assetCode.toLowerCase() + "%");
+                tagId == null ? null : cb.like(
+                        cb.lower(root.get("tagId")), "%" + tagId.toLowerCase() + "%");
     }
 
-    public static Specification<Asset> hasDescriptionLike(String description) {
+    public static Specification<Asset> hasAssetNameLike(String assetName) {
         return (root, query, cb) ->
-                description == null ? null : cb.like(
-                        cb.lower(root.get("description")), "%" + description.toLowerCase() + "%"
+                assetName == null ? null : cb.like(
+                        cb.lower(root.get("assetName")), "%" + assetName.toLowerCase() + "%"
                 );
     }
 
-    public static Specification<Asset> hasAssetClass(AssetClass assetClass) {
-        return (root, query, cb) ->
-                assetClass == null ? null : cb.equal(root.get("assetClass"), assetClass);
-    }
+//    public static Specification<Asset> hasAssetClass(AssetClass assetClass) {
+//        return (root, query, cb) ->
+//                assetClass == null ? null : cb.equal(root.get("assetClass"), assetClass);
+//    }
 
     public static Specification<Asset> hasStatus(AssetStatus status) {
         return (root, query, cb) ->

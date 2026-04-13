@@ -10,11 +10,12 @@ public class AssetMapper {
 
     public static Asset toEntity(AssetCreateRequest request) {
         Asset asset = new Asset();
-        asset.setAssetCode(request.getAssetCode());
-        asset.setDescription(request.getDescription());
+        asset.setTagId(request.getTagId());
+        asset.setAssetName(request.getAssetName());
         asset.setSerialNumber(request.getSerialNumber());
         asset.setDateOfAcquisition(request.getDateOfAcquisition());
         asset.setAmount(request.getAmount());
+        asset.setLocation(request.getLocation());
         asset.setSubsidiary(request.getSubsidiary());
         asset.setRemark(request.getRemark());
         return asset;
@@ -23,9 +24,9 @@ public class AssetMapper {
     public static AssetResponse toResponse(Asset asset) {
         AssetResponse response = new AssetResponse();
         response.setId(asset.getId());
-        response.setAssetCode(asset.getAssetCode());
-        response.setDescription(asset.getDescription());
-        response.setAssetClass(asset.getAssetClass());
+        response.setTagId(asset.getTagId());
+        response.setAssetName(asset.getAssetName());
+        response.setLocation(asset.getLocation());
         response.setCategoryName(
                 asset.getCategory() != null ? asset.getCategory().getName() : null
         );
@@ -48,10 +49,11 @@ public class AssetMapper {
 
 
     public static AssetResponse toAllowedUpdate(Asset existing, AssetUpdateRequest request) {
-        existing.setDescription(request.getDescription());
+        existing.setAssetName(request.getAssetName());
         existing.setSerialNumber(request.getSerialNumber());
         existing.setRemark(request.getRemark());
         existing.setAmount(request.getAmount());
+        existing.setLocation(request.getLocation());
         existing.setSubsidiary(request.getSubsidiary());
         existing.setDateOfAcquisition(request.getDateOfAcquisition());
 

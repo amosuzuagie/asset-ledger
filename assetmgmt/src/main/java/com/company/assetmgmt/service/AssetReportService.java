@@ -14,7 +14,7 @@ public interface AssetReportService {
 
     List<CountReport> getAssetsByCategory();
 
-    List<CountReport> getAssetsByAssetClass();
+//    List<CountReport> getAssetsByAssetClass();
 
     AssetFinancialSummary getFinancialSummary();
 }

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface BranchRepository extends JpaRepository<Branch, UUID> {
@@ -29,5 +29,9 @@ public interface BranchRepository extends JpaRepository<Branch, UUID> {
         SELECT b FROM Branch b
         WHERE b.deleted = false
     """)
-    Page<Branch> findAllActive(Pageable pageable);
+//    Page<Branch> findAllActive(Pageable pageable);
+
+    boolean existsByCodeAndDeletedFalse(String branchCode);
+
+    Optional<Branch> findByCodeAndDeletedFalse(String branchCode);
 }

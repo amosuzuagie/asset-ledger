@@ -8,9 +8,11 @@ import java.util.UUID;
 
 @Data
 public class AssetUpdateRequest {
-    private String description;
+    private String assetName;
 
     private String serialNumber;
+
+    private String location;
 
     private LocalDate dateOfAcquisition;
 

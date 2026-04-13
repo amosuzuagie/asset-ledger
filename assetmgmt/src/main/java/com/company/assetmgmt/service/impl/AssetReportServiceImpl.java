@@ -34,10 +34,10 @@ public class AssetReportServiceImpl implements AssetReportService {
         return reportRepository.assetsByCategory();
     }
 
-    @Override
-    public List<CountReport> getAssetsByAssetClass() {
-        return reportRepository.assetsByAssetClass();
-    }
+//    @Override
+//    public List<CountReport> getAssetsByAssetClass() {
+//        return reportRepository.assetsByAssetClass();
+//    }
 
     @Override
     public AssetFinancialSummary getFinancialSummary() {

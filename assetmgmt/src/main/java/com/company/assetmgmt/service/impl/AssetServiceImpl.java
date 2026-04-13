@@ -5,7 +5,6 @@ import com.company.assetmgmt.exception.BusinessRuleException;
 import com.company.assetmgmt.exception.ResourceNotFoundException;
 import com.company.assetmgmt.mapper.AssetMapper;
 import com.company.assetmgmt.model.*;
-import com.company.assetmgmt.model.enums.AssetClass;
 import com.company.assetmgmt.model.enums.AssetStatus;
 import com.company.assetmgmt.repository.AssetCategoryRepository;
 import com.company.assetmgmt.repository.AssetMovementRepository;
@@ -42,29 +41,29 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public AssetResponse createAsset(AssetCreateRequest request, UUID categoryId) {
 
-        // Asset code must be unique
-        if (assetRepository.existsByAssetCode(request.getAssetCode())) {
+        // Asset Tag must be unique
+        if (assetRepository.existsByTagId(request.getTagId())) {
             throw new BusinessRuleException("Asset code already exists");
         }
 
         AssetCategory category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Asset category not found"));
 
-        AssetClass lockedClass = category.getAssetClass();
 
         Asset asset = AssetMapper.toEntity(request);
-        asset.setAssetClass(lockedClass);
         asset.setCategory(category);
 
-        asset.setStatus(
-                asset.getBranch() == null ? AssetStatus.IN_STORE : AssetStatus.ASSIGNED
-        );
+        if (request.getBranchId() != null) {
+            Branch branch = branchRepository.findById(request.getBranchId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
+
+            asset.setBranch(branch);
+            asset.setStatus(AssetStatus.ASSIGNED);
+        } else {
+            asset.setStatus(AssetStatus.IN_STORE);
+        }
 
         assetRepository.save(asset);
-
-        if (request.getBranchId() != null) {
-            this.assignAssetToBranch(asset.getId(), request.getBranchId());
-        }
 
         return AssetMapper.toResponse(asset);
     }
@@ -83,15 +82,15 @@ public class AssetServiceImpl implements AssetService {
         }
 
         //Prevent asset class changes
-        AssetClass existingClass = existing.getAssetClass();
+//        AssetClass existingClass = existing.getAssetClass();
 
         if (categoryId != null) {
             AssetCategory category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new ResourceNotFoundException("Asset category not found"));
 
-            if (!category.getAssetClass().equals(existingClass)) {
-                throw new BusinessRuleException("Category does not belong to asset class: " + existingClass);
-            }
+//            if (!category.getAssetClass().equals(existingClass)) {
+//                throw new BusinessRuleException("Category does not belong to asset class: " + existingClass);
+//            }
             existing.setCategory(category);
         }
 
@@ -149,9 +148,8 @@ public class AssetServiceImpl implements AssetService {
     @Transactional(readOnly = true)
     public Page<AssetResponse> searchAssets(AssetSearchRequest filter, Pageable pageable) {
         Specification<Asset> spec = Specification.where(
-                AssetSpecification.hasAssetCodeLike(filter.getAssetCode())
-                ).and(AssetSpecification.hasDescriptionLike(filter.getDescription()))
-                .and(AssetSpecification.hasAssetClass(filter.getAssetClass()))
+                AssetSpecification.hasAssetTagIdLike(filter.getTagId())
+                ).and(AssetSpecification.hasAssetNameLike(filter.getAssetName()))
                 .and(AssetSpecification.hasCategory(filter.getCategoryId()))
                 .and(AssetSpecification.hasBranch(filter.getBranchId()))
                 .and(AssetSpecification.hasStatus(filter.getStatus()))
@@ -264,9 +262,9 @@ public class AssetServiceImpl implements AssetService {
     private AssetResponse mapToResponse(Asset a) {
         return new AssetResponse(
                 a.getId(),
-                a.getAssetCode(),
-                a.getDescription(),
-                a.getAssetClass(),
+                a.getTagId(),
+                a.getAssetName(),
+                a.getLocation(),
                 a.getCategory().getId(),
                 a.getCategory().getName(),
                 a.getStatus(),

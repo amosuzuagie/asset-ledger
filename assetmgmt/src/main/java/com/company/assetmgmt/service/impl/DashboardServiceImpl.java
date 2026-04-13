@@ -24,9 +24,7 @@ public class DashboardServiceImpl implements DashboardService {
                 assetRepository.count(),
                 assetRepository.totalAssetValue(),
                 toCountMap(assetRepository.countAssetsByStatus()),
-                toCountMap(assetRepository.countAssetsByClass()),
                 toCountMap(assetRepository.countAssetsByBranch()),
-                toSumMap(assetRepository.sumAssetValueByClass()),
                 toSumMap(assetRepository.sumAssetValueByBranch())
         );
     }

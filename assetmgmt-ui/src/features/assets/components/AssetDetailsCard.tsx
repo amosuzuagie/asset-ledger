@@ -5,10 +5,10 @@ export const AssetDetailsCard = ({ asset }: { asset: AssetResponse }) => {
   return (
     <>
       <div className="bg-white rounded-lg shadow p-6 grid grid-cols-2 gap-4">
-      <Detail label="Asset Code" value={asset.assetCode} />
-      <Detail label="Description" value={asset.description} />
+      <Detail label="Tag ID" value={asset.tagId} />
+      <Detail label="Asset Name" value={asset.assetName} />
       <Detail label="Category" value={asset.categoryName} />
-      <Detail label="Class" value={asset.assetClass} />
+      <Detail label="Location" value={asset.location ?? "-"} />
       <Detail label="Status" value={<AssetStatusBadge status={asset.status} />} />
       <Detail label="Branch" value={asset.branchName ?? "-"} />
       <Detail label="Amount" value={asset.amount?.toLocaleString() ?? "-"} />

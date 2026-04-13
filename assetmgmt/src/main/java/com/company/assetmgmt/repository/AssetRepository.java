@@ -4,7 +4,6 @@ import com.company.assetmgmt.model.Asset;
 import com.company.assetmgmt.model.enums.AssetStatus;
 import com.company.assetmgmt.repository.projection.CountByKeyProjection;
 import com.company.assetmgmt.repository.projection.SumByKeyProjection;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,14 +20,6 @@ import java.util.UUID;
 public interface AssetRepository extends JpaRepository<Asset, UUID>, JpaSpecificationExecutor<Asset> {
     Optional<Asset> findBySerialNumber(String serialNumber);
 
-//    @Query("""
-//       select distinct a
-//       from Asset a
-//       join a.tags t
-//       where t.id = :tagId
-//       """)
-//    Optional<Asset> findByTagId(String tagId);
-
     List<Asset> findByStatus(AssetStatus status);
 
     List<Asset> findByBranch_Id(UUID branchId);
@@ -40,13 +31,13 @@ public interface AssetRepository extends JpaRepository<Asset, UUID>, JpaSpecific
        """)
     List<CountByKeyProjection> countAssetsByStatus();
 
-    @Query("""
-       select c.assetClass as key, count(a) as total
-       from Asset a
-       join a.category c
-       group by c.assetClass
-       """)
-    List<CountByKeyProjection> countAssetsByClass();
+//    @Query("""
+//       select c.assetClass as key, count(a) as total
+//       from Asset a
+//       join a.category c
+//       group by c.assetClass
+//       """)
+//    List<CountByKeyProjection> countAssetsByClass();
 
     @Query("""
        select coalesce(b.name, 'IN_STORE') as key, count(a) as total
@@ -56,13 +47,13 @@ public interface AssetRepository extends JpaRepository<Asset, UUID>, JpaSpecific
        """)
     List<CountByKeyProjection> countAssetsByBranch();
 
-    @Query("""
-       select c.assetClass as key, sum(a.amount) as total
-       from Asset a
-       join a.category c
-       group by c.assetClass
-       """)
-    List<SumByKeyProjection> sumAssetValueByClass();
+//    @Query("""
+//       select c.assetClass as key, sum(a.amount) as total
+//       from Asset a
+//       join a.category c
+//       group by c.assetClass
+//       """)
+//    List<SumByKeyProjection> sumAssetValueByClass();
 
     @Query("""
        select coalesce(b.name, 'IN_STORE') as key, sum(a.amount) as total
@@ -81,7 +72,7 @@ public interface AssetRepository extends JpaRepository<Asset, UUID>, JpaSpecific
     @Query("select coalesce(sum(a.amount), 0) from Asset a")
     BigDecimal totalAssetValue();
 
-    boolean existsByAssetCode(@NotBlank String assetCode);
-
     boolean existsByBranchId(UUID branchId);
+
+    boolean existsByTagId(String tagId);
 }

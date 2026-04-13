@@ -41,29 +41,40 @@ export const AssetForm = ({ onSubmit, submitting, defaultValues }: Props) => {
         Asset Details
       </h3>
 
-      {/* Asset Code */}
+      {/* Asset Tag ID */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Asset Code
+          Tag ID
         </label>
         <input
-          {...register("assetCode", { required: true })}
+          {...register("tagId", { required: true })}
           className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
         />
-        {errors.assetCode && (
+        {errors.tagId && (
           <p className="text-xs text-red-600 mt-1">
             Asset code is required
           </p>
         )}
       </div>
 
-      {/* Description */}
+      {/* Asset Name */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Description
+          Asset Name
         </label>
         <input
-          {...register("description", { required: true })}
+          {...register("assetName", { required: true })}
+          className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+        />
+      </div>
+
+      {/* Location */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Location
+        </label>
+        <input
+          {...register("location", { required: true })}
           className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
         />
       </div>
@@ -77,7 +88,7 @@ export const AssetForm = ({ onSubmit, submitting, defaultValues }: Props) => {
         <option value="" disabled>Select Category</option>
         {filteredCategories.map(cat =>(
           <option key={cat.id} value={cat.id}>
-            {cat.name} ({cat.assetClass})
+            {cat.name}
           </option>
         ))}
       </select>

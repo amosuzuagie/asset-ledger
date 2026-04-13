@@ -6,6 +6,6 @@ export type DashboardSummary = {
     assetsByClass: Record<string, number>;
     assetsByBranch: Record<string, number>;
 
-    assetValueByClass: Record<string, number>;
+    // assetValueByClass: Record<string, number>;
     assetValueByBranch: Record<string, number>;
 };
